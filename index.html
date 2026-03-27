@@ -183,7 +183,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .mode-card.sv .mode-name{color:#a855f7;}
 .mode-card.sv .mode-tag{color:#a855f7;border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.07);}
 /* survival HUD */
-.sv-hud{display:flex;align-items:center;justify-content:center;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;}
+.sv-hud{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;}
 .sv-hud-block{text-align:center;}
 .sv-hud-label{font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
 .lives-display{display:flex;gap:6px;align-items:center;justify-content:center;font-size:26px;}
@@ -208,13 +208,62 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .sv-round-row .svr-delta{width:70px;flex-shrink:0;font-size:11px;}
 .sv-round-row .svr-badge{flex-shrink:0;}
 .sv-round-row .svr-pts{margin-left:auto;color:#a855f7;font-size:11px;flex-shrink:0;}
+/* PROFILE */
+.profile-btn{background:transparent;border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;transition:all 0.2s;margin-bottom:20px;}
+.profile-btn:hover{color:var(--accent);border-color:rgba(0,255,136,0.4);}
+.profile-header-row{display:flex;justify-content:flex-end;margin-bottom:-30px;position:relative;z-index:2;}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#00c4ff);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:28px;color:#0a0a0f;margin:0 auto 14px;}
+.profile-name-big{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:0.08em;color:var(--text);text-align:center;}
+.profile-meta{font-size:12px;color:var(--muted);text-align:center;letter-spacing:0.18em;margin-top:4px;margin-bottom:8px;}
+.rank-badge{display:flex;align-items:center;gap:8px;padding:7px 18px;border-radius:100px;border:1px solid;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;width:fit-content;margin:0 auto 28px;}
+.profile-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:18px;}
+@media(max-width:500px){.profile-stats-grid{grid-template-columns:1fr 1fr;}}
+.profile-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 10px;text-align:center;}
+.ps-label{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.ps-val{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text);}
+.ps-val.green{color:var(--accent);} .ps-val.yellow{color:var(--accent3);} .ps-val.purple{color:#a855f7;} .ps-val.red{color:var(--accent2);}
+.profile-records{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+.prr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;}
+.prr-mode{font-size:12px;color:var(--muted);letter-spacing:0.1em;}
+.prr-right{text-align:right;}
+.prr-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);}
+.prr-sub{font-size:10px;color:var(--muted);}
+/* first-run overlay */
+.firstrun-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.94);z-index:200;align-items:center;justify-content:center;}
+.firstrun-overlay.active{display:flex;}
+.firstrun-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:38px 32px;max-width:400px;width:92%;text-align:center;}
+.firstrun-title{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px;}
+.firstrun-sub{font-size:12px;color:var(--muted);letter-spacing:0.12em;line-height:1.7;margin-bottom:26px;}
+.firstrun-fields{display:flex;flex-direction:column;gap:14px;margin-bottom:22px;text-align:left;}
 </style>
-</head>
 <body>
 <div class="container">
-  <div class="header">
+  <div class="header" style="position:relative;">
     <div class="logo">TIME<span style="color:var(--text);opacity:0.55"> </span>X</div>
     <div class="tagline">Reaction Time Challenge</div>
+    <div class="profile-header-row" style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
+      <button class="profile-btn" id="sound-toggle" onclick="toggleSound()" title="Toggle sound">🔊</button>
+      <button class="profile-btn" onclick="showScreen('screen-profile')">👤 Profile</button>
+    </div>
+  </div>
+
+  <!-- FIRST RUN OVERLAY -->
+  <div class="firstrun-overlay" id="firstrun-overlay">
+    <div class="firstrun-box">
+      <div class="firstrun-title">Welcome!</div>
+      <div class="firstrun-sub">Set up your profile once and your age, records and stats will be saved every time you play.</div>
+      <div class="firstrun-fields">
+        <div class="field"><label>Your Name</label><input type="text" id="fr-name" placeholder="Enter your name" maxlength="20" autocomplete="off"></div>
+        <div class="field"><label>Your Age</label><input type="number" id="fr-age" placeholder="25" min="5" max="99"></div>
+      </div>
+      <button class="btn btn-primary" onclick="saveProfile()">✓ Save Profile &amp; Play</button>
+    </div>
+  </div>
+
+  <!-- PROFILE SCREEN -->
+  <div class="screen" id="screen-profile">
+    <button class="btn btn-back" onclick="showScreen('screen-mode')">← Back</button>
+    <div id="profile-content"></div>
   </div>
 
   <!-- MODE SELECT -->
@@ -420,6 +469,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     </div>
     <div class="sv-hud">
       <div class="sv-hud-block"><div class="sv-hud-label">Lives</div><div class="lives-display" id="sv-lives-display">❤️❤️❤️</div></div>
+      <div class="sv-hud-block" id="sv-target-wrap" style="opacity:0.35;">
+        <div class="sv-hud-label">Beat This Time</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--accent3);letter-spacing:0.05em;line-height:1;" id="sv-target-display">—</div>
+        <div style="font-size:9px;color:var(--muted);letter-spacing:0.15em;margin-top:3px;">or lose a life</div>
+      </div>
     </div>
     <div class="reaction-zone state-wait" id="sv-qt-zone" onclick="svQtClick()" style="display:none">
       <div class="zone-emoji" id="sv-qt-emoji">👁</div>
@@ -481,6 +535,7 @@ let paused=false;
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  if(id==='screen-profile') renderProfile();
 }
 function goHome(){
   clearWT(); btStop(); svStop(); gamePhase='idle';
@@ -488,6 +543,9 @@ function goHome(){
   showScreen('screen-mode');
 }
 function clearWT(){ if(waitTimer){clearTimeout(waitTimer);waitTimer=null;} }
+
+// Check first run on page load
+window.addEventListener('load', ()=>{ checkFirstRun(); });
 
 function togglePause(){
   paused=!paused;
@@ -517,6 +575,18 @@ function togglePause(){
 document.addEventListener('keydown',e=>{
   if(e.code==='Escape'){ if(gamePhase!=='idle') togglePause(); return; }
   if(paused) return;
+
+  // Enter starts the game from any setup screen
+  if(e.code==='Enter'){
+    const active=document.querySelector('.screen.active');
+    if(!active) return;
+    const id=active.id;
+    if(id==='screen-qt-setup'){e.preventDefault();startQT();}
+    else if(id==='screen-bt-setup'){e.preventDefault();startBT();}
+    else if(id==='screen-sv-setup'){e.preventDefault();startSV();}
+    return;
+  }
+
   if(e.code==='Space'&&gamePhase!=='idle'){
     e.preventDefault();
     if(currentMode==='qt') qtClick();
@@ -525,7 +595,141 @@ document.addEventListener('keydown',e=>{
   }
 });
 
-// ── Benchmarks ──
+// ═══════════════════════ PROFILE SYSTEM ════════════════════════
+function loadProfile(){
+  try{ return JSON.parse(localStorage.getItem('tx_profile'))||null; }catch(e){return null;}
+}
+function saveProfile(){
+  const name=document.getElementById('fr-name').value.trim();
+  const a=parseInt(document.getElementById('fr-age').value);
+  if(!name){document.getElementById('fr-name').style.borderColor='var(--accent2)';setTimeout(()=>{document.getElementById('fr-name').style.borderColor='';},1500);return;}
+  if(!a||a<5||a>99){document.getElementById('fr-age').style.borderColor='var(--accent2)';setTimeout(()=>{document.getElementById('fr-age').style.borderColor='';},1500);return;}
+  const existing=loadProfile()||{};
+  const profile={
+    name, age:a,
+    totalGames: existing.totalGames||0,
+    totalRounds: existing.totalRounds||0,
+    qtGames: existing.qtGames||0,
+    btGames: existing.btGames||0,
+    svGames: existing.svGames||0,
+    bestQtAvg: existing.bestQtAvg||null,
+    bestBtAvg: existing.bestBtAvg||null,
+    bestSvScore: existing.bestSvScore||null,
+    allTimebestMs: existing.allTimebestMs||null,
+    joinDate: existing.joinDate||new Date().toLocaleDateString('en-GB'),
+  };
+  try{localStorage.setItem('tx_profile',JSON.stringify(profile));}catch(e){}
+  age=a;
+  document.getElementById('firstrun-overlay').classList.remove('active');
+  // pre-fill age fields
+  prefillAge(a);
+  showScreen('screen-mode');
+}
+
+function prefillAge(a){
+  ['qt-age','bt-age','sv-age'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value=a;
+  });
+}
+
+function updateProfileStats(mode, roundsPlayed, avgMs, score){
+  const p=loadProfile(); if(!p) return;
+  p.totalGames=(p.totalGames||0)+1;
+  p.totalRounds=(p.totalRounds||0)+roundsPlayed;
+  if(mode==='qt'){
+    p.qtGames=(p.qtGames||0)+1;
+    if(avgMs && (!p.bestQtAvg||avgMs<p.bestQtAvg)) p.bestQtAvg=avgMs;
+  } else if(mode==='bt'){
+    p.btGames=(p.btGames||0)+1;
+    if(avgMs && (!p.bestBtAvg||avgMs<p.bestBtAvg)) p.bestBtAvg=avgMs;
+  } else if(mode==='sv'){
+    p.svGames=(p.svGames||0)+1;
+    if(score && (!p.bestSvScore||score>p.bestSvScore)) p.bestSvScore=score;
+  }
+  if(avgMs && (!p.allTimebestMs||avgMs<p.allTimebestMs)) p.allTimebestMs=avgMs;
+  try{localStorage.setItem('tx_profile',JSON.stringify(p));}catch(e){}
+}
+
+function getRank(bestMs, a){
+  if(!bestMs) return {label:'Unranked',emoji:'—',col:'var(--muted)'};
+  const b=bench(a);const z=(bestMs-b.mean)/b.sd;
+  if(z<-2.0) return {label:'Superhuman',emoji:'⚡',col:'#b8ffda'};
+  if(z<-1.5) return {label:'Elite',emoji:'🔥',col:'var(--accent)'};
+  if(z<-1.0) return {label:'Pro',emoji:'✨',col:'#6ee7ff'};
+  if(z<-0.3) return {label:'Sharp',emoji:'👍',col:'#6ee7ff'};
+  if(z< 0.3) return {label:'Average',emoji:'😐',col:'var(--accent3)'};
+  if(z< 1.0) return {label:'Slow',emoji:'🐢',col:'#ff9a5c'};
+  return {label:'Beginner',emoji:'🦥',col:'var(--accent2)'};
+}
+
+function renderProfile(){
+  const p=loadProfile();
+  const el=document.getElementById('profile-content');
+  if(!p){el.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--muted);">No profile yet. Play a game first!</div>`;return;}
+  const rank=getRank(p.allTimebestMs,p.age);
+  const initials=p.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const favMode=p.qtGames>=p.btGames&&p.qtGames>=p.svGames?'QuickTap':p.btGames>=p.svGames?'BrakeTest':'Survival';
+  el.innerHTML=`
+    <div class="profile-avatar">${initials}</div>
+    <div class="profile-name-big">${p.name}</div>
+    <div class="profile-meta">Age ${p.age} · Playing since ${p.joinDate}</div>
+    <div class="rank-badge" style="border-color:${rank.col};color:${rank.col};background:${rank.col}18;">
+      ${rank.emoji} ${rank.label}
+    </div>
+    <div class="section-lbl">All-Time Stats</div>
+    <div class="profile-stats-grid">
+      <div class="profile-stat"><div class="ps-label">Total Games</div><div class="ps-val green">${p.totalGames||0}</div></div>
+      <div class="profile-stat"><div class="ps-label">Total Rounds</div><div class="ps-val">${p.totalRounds||0}</div></div>
+      <div class="profile-stat"><div class="ps-label">Best Time Ever</div><div class="ps-val green">${p.allTimebestMs?p.allTimebestMs+'ms':'—'}</div></div>
+      <div class="profile-stat"><div class="ps-label">QuickTap Games</div><div class="ps-val yellow">${p.qtGames||0}</div></div>
+      <div class="profile-stat"><div class="ps-label">BrakeTest Games</div><div class="ps-val red">${p.btGames||0}</div></div>
+      <div class="profile-stat"><div class="ps-label">Survival Games</div><div class="ps-val purple">${p.svGames||0}</div></div>
+    </div>
+    <div class="section-lbl">Personal Records</div>
+    <div class="profile-records">
+      <div class="prr"><div class="prr-mode">⚡ QuickTap — Best Avg</div><div class="prr-right"><div class="prr-val">${p.bestQtAvg?p.bestQtAvg+'ms':'—'}</div></div></div>
+      <div class="prr"><div class="prr-mode">🏎 BrakeTest — Best Avg</div><div class="prr-right"><div class="prr-val">${p.bestBtAvg?p.bestBtAvg+'ms':'—'}</div></div></div>
+      <div class="prr"><div class="prr-mode">💀 Survival — High Score</div><div class="prr-right"><div class="prr-val" style="color:#a855f7">${p.bestSvScore?p.bestSvScore+' pts':'—'}</div></div></div>
+    </div>
+    <div class="section-lbl">Favourite Mode</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;font-size:14px;color:var(--text);margin-bottom:24px;">
+      ${favMode==='QuickTap'?'⚡':favMode==='BrakeTest'?'🏎':'💀'} <strong>${favMode}</strong>
+      <span style="color:var(--muted);font-size:12px;margin-left:8px;">${Math.max(p.qtGames||0,p.btGames||0,p.svGames||0)} games played</span>
+    </div>
+    <button class="btn btn-secondary" style="width:100%;margin-bottom:10px;" onclick="editProfile()">✏️ Edit Name / Age</button>
+    <button class="btn" style="width:100%;background:rgba(255,60,110,0.08);color:var(--accent2);border:1px solid rgba(255,60,110,0.2);border-radius:10px;padding:14px;" onclick="resetProfile()">🗑 Reset All Data</button>
+  `;
+}
+
+function editProfile(){
+  const p=loadProfile()||{};
+  document.getElementById('fr-name').value=p.name||'';
+  document.getElementById('fr-age').value=p.age||'';
+  document.getElementById('firstrun-overlay').classList.add('active');
+}
+
+function resetProfile(){
+  if(!confirm('Reset ALL your data? This cannot be undone.')) return;
+  localStorage.clear();
+  showScreen('screen-mode');
+  checkFirstRun();
+}
+
+function checkFirstRun(){
+  // Set sound button icon
+  const sb=document.getElementById('sound-toggle');
+  if(sb) sb.textContent=soundOn?'🔊':'🔇';
+  const p=loadProfile();
+  if(!p){
+    document.getElementById('firstrun-overlay').classList.add('active');
+  } else {
+    age=p.age;
+    prefillAge(p.age);
+  }
+}
+
+// ── Hook profile stats into results ──
 const BENCH=[
   {m:12,mean:310,sd:55},{m:17,mean:270,sd:48},{m:24,mean:250,sd:45},
   {m:34,mean:265,sd:48},{m:44,mean:280,sd:50},{m:54,mean:300,sd:55},
@@ -578,6 +782,7 @@ function loadRecord(key,bannerId,valId){
 function saveRecord(key,rounds,avgMs){try{localStorage.setItem(key,JSON.stringify({rounds,avgMs}));}catch(e){}}
 function selectMode(m){
   currentMode=m;
+  const p=loadProfile(); if(p) prefillAge(p.age);
   if(m==='qt'){loadRecord('tx_qt','qt-record-banner','qt-record-val');showScreen('screen-qt-setup');}
   else if(m==='bt'){loadRecord('tx_bt','bt-record-banner','bt-record-val');showScreen('screen-bt-setup');}
   else{
@@ -613,7 +818,8 @@ function showResults(modeName){
   const rk=currentMode==='qt'?'tx_qt':'tx_bt';
   let rec=null;try{rec=JSON.parse(localStorage.getItem(rk));}catch(e){}
   const isRec=!rec||avg<rec.avgMs;
-  if(isRec)saveRecord(rk,totalRounds,avg);
+  if(isRec){saveRecord(rk,totalRounds,avg);setTimeout(sndRecord,300);}
+  else{setTimeout(sndRoundDone,200);}
   const {score,pct,bavg}=calcScore(avg,age);
   document.getElementById('res-mode-tag').textContent=modeName+' Results';
   document.getElementById('res-avg').innerHTML=`${avg}<span>ms</span>`;
@@ -662,6 +868,7 @@ function showResults(modeName){
   });
   const lines=times.map((t,i)=>t.tooEarly?`#${i+1}: Too Early`:`#${i+1}: ${t.ms}ms — ${ageRating(t.ms,age).label}`);
   lastShareText=`TimeX ${modeName}\nAge: ${age} | Rounds: ${totalRounds}\nAvg: ${avg}ms | Score: ${score}/100\n\n${lines.join('\n')}`;
+  updateProfileStats(currentMode, valid.length, avg, null);
   showScreen('screen-results');
 }
 function doShare(){
@@ -702,7 +909,7 @@ function qtPhase(p){
   const em=document.getElementById('qt-emoji'),mn=document.getElementById('qt-main'),sb=document.getElementById('qt-sub');
   z.className='reaction-zone';
   if(p==='waiting'){z.classList.add('state-wait');em.textContent='👁';mn.textContent='GET READY...';sb.textContent='Wait for the red flash';}
-  else if(p==='go'){window._qtT=Date.now();z.classList.add('state-go');em.textContent='🔴';mn.textContent='CLICK NOW!';sb.textContent='As fast as you can!';}
+  else if(p==='go'){window._qtT=Date.now();z.classList.add('state-go');em.textContent='🔴';mn.textContent='CLICK NOW!';sb.textContent='As fast as you can!';sndFlash();}
   else if(p==='too-early'){z.classList.add('state-too-early');em.textContent='⚠️';mn.textContent='TOO EARLY!';sb.textContent='Wait for the flash';}
   else if(p==='result'){
     const last=times[times.length-1];z.classList.add('state-result');em.textContent='✅';
@@ -713,10 +920,12 @@ function qtClick(){
   if(paused) return;
   if(gamePhase==='waiting'){
     clearWT();times.push({ms:null,tooEarly:true});markChip('qt-strip',times.length-1,true);
+    sndTooEarly();
     qtPhase('too-early');waitTimer=setTimeout(()=>qtNext(),1200);return;
   }
   if(gamePhase==='go'){
     const ms=Date.now()-window._qtT;times.push({ms,tooEarly:false});markChip('qt-strip',times.length-1,false,ms);
+    sndReact();
     qtPhase('result');waitTimer=setTimeout(()=>qtNext(),900);
   }
 }
@@ -758,7 +967,7 @@ function btRound(){
   // Lights go red after a random delay: 2.0 – 5.5 seconds
   const delay=2000+Math.random()*3500;
   waitTimer=setTimeout(()=>{
-    if(btSt==='driving'){btRedOn=true;btRedTime=Date.now();btSt='red';gamePhase='go';brakeFlash=1;}
+    if(btSt==='driving'){btRedOn=true;btRedTime=Date.now();btSt='red';gamePhase='go';brakeFlash=1;sndFlash();}
   },delay);
   btAnim=requestAnimationFrame(btLoop);
 }
@@ -780,6 +989,7 @@ function btClick(){
     btStop(); clearWT();
     times.push({ms:null,tooEarly:true}); markChip('bt-strip',times.length-1,true);
     btSt='early'; gamePhase='idle'; btRedOn=false;
+    sndTooEarly();
     const fb=document.getElementById('bt-feedback');
     document.getElementById('bf-msg').textContent='⚠️ Too Early!';
     document.getElementById('bf-time').textContent='';
@@ -793,7 +1003,7 @@ function btClick(){
     btStop(); clearWT();
     times.push({ms,tooEarly:false}); markChip('bt-strip',times.length-1,false,ms);
     btResult=ms; btSt='done'; gamePhase='idle'; btRedOn=false;
-    // Instant feedback — no braking animation delay
+    sndReact();
     btShowFb();
   }
 }
@@ -1068,20 +1278,24 @@ function svGameStart(){
 }
 
 function svUpdateHUD(){
+  // Hearts
   let hearts='';
   for(let i=0;i<svMaxLives;i++) hearts+=i<svLives?'❤️':'🩶';
   document.getElementById('sv-lives-display').textContent=hearts;
+  // Target — avg of last 2 + 30ms threshold
+  const target=svRefAvg!==null ? (svRefAvg+30)+'ms' : '—';
+  document.getElementById('sv-target-display').textContent=target;
+  document.getElementById('sv-target-wrap').style.opacity=svRefAvg!==null?'1':'0.35';
 }
 
 function svNextRound(){
   if(svLives<=0){ svEndGame(); return; }
   svRound++;
-  document.getElementById('sv-round-display').textContent=svRound;
   document.getElementById('sv-feedback').classList.add('hidden');
-  // Compute reference: avg of last 3 valid times
+  // Compute reference: avg of last 2 valid times
   const validMs=svTimes.filter(t=>!t.tooEarly).map(t=>t.ms);
   svRefAvg=validMs.length>=2 ? Math.round(validMs.slice(-2).reduce((a,b)=>a+b,0)/2) : null;
-
+  svUpdateHUD();
   if(svSub==='qt') svQtStart();
   else svBtStart();
 }
@@ -1101,6 +1315,7 @@ function svQtGo(){
   document.getElementById('sv-qt-emoji').textContent='🔴';
   document.getElementById('sv-qt-main').textContent='CLICK NOW!';
   document.getElementById('sv-qt-sub').textContent='As fast as you can!';
+  sndFlash();
 }
 function svQtClick(){ svClick(); }
 
@@ -1151,8 +1366,8 @@ function svClick(){
 }
 
 function svRecordTooEarly(){
-  // Too early = loses a life
   svLives=Math.max(0,svLives-1);
+  sndLifeLost();
   svTimes.push({ms:null,tooEarly:true,lifeLost:true,pts:0,delta:null});
   svAddChip(svTimes.length-1,true,null);
   svUpdateHUD();
@@ -1172,6 +1387,8 @@ function svRecordTime(ms){
   }
   const pts=lifeLost?0:basePts;
   svScore+=pts;
+  sndReact();
+  if(lifeLost) setTimeout(sndLifeLost, 80);
   svTimes.push({ms,tooEarly:false,lifeLost,pts,delta:delta!==null?Math.round(delta):null});
   svAddChip(svTimes.length-1,false,ms);
   svUpdateHUD();
@@ -1220,7 +1437,7 @@ function svBtStart(){
   gamePhase='waiting';
   const delay=2000+Math.random()*3500;
   waitTimer=setTimeout(()=>{
-    if(svBtSt==='driving'&&!paused){svBtRedOn=true;svBtRedTime=Date.now();svBtSt='red';gamePhase='go';svBrakeFlash=1;}
+    if(svBtSt==='driving'&&!paused){svBtRedOn=true;svBtRedTime=Date.now();svBtSt='red';gamePhase='go';svBrakeFlash=1;sndFlash();}
   },delay);
   svBtLastTs=performance.now();
   svBtAnim=requestAnimationFrame(svBtLoop);
@@ -1311,13 +1528,14 @@ function svDrawScene(){
 
 function svEndGame(){
   svStop(); svBtStop(); clearWT(); gamePhase='idle';
+  sndGameOver();
   const validMs=svTimes.filter(t=>!t.tooEarly).map(t=>t.ms);
   const avg=validMs.length?Math.round(validMs.reduce((a,b)=>a+b,0)/validMs.length):0;
   const best=validMs.length?Math.min(...validMs):0;
   // High score
   let rec=null;try{rec=JSON.parse(localStorage.getItem('tx_sv'));}catch(e){}
   const isRec=!rec||svScore>rec.score;
-  if(isRec)try{localStorage.setItem('tx_sv',JSON.stringify({score:svScore,rounds:svRound-1}));}catch(e){}
+  if(isRec){try{localStorage.setItem('tx_sv',JSON.stringify({score:svScore,rounds:svRound-1}));}catch(e){}setTimeout(sndRecord,800);}
   document.getElementById('svr-score').textContent=svScore;
   document.getElementById('svr-record').classList.toggle('hidden',!isRec);
   document.getElementById('svr-rounds').textContent=svRound-1;
@@ -1339,6 +1557,7 @@ function svEndGame(){
     log.appendChild(row);
   });
   svLastShareText=`TIME X — Survival\nAge: ${age} | Sub-mode: ${svSub==='qt'?'QuickTap':'BrakeTest'}\nScore: ${svScore} | Rounds: ${svRound-1}\nBest: ${best}ms | Avg: ${avg}ms`;
+  updateProfileStats('sv', svRound-1, avg||null, svScore);
   showScreen('screen-sv-results');
 }
 
@@ -1346,10 +1565,120 @@ function svShare(){
   const btn=document.getElementById('sv-share-btn');
   navigator.clipboard.writeText(svLastShareText).then(()=>{btn.textContent='✓ Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='⎘ Share';btn.classList.remove('copied');},2000);}).catch(()=>{});
 }
-function svPlayAgain(){
-  svStop(); svBtStop(); clearWT();
-  svGameStart();
+// ═══════════════════════ SOUND ENGINE ════════════════════════
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let _actx = null;
+let soundOn = true;
+
+function getACtx(){
+  if(!_actx) _actx = new AudioCtx();
+  if(_actx.state === 'suspended') _actx.resume();
+  return _actx;
 }
+
+// Load sound preference
+try{ soundOn = localStorage.getItem('tx_sound') !== 'off'; }catch(e){}
+
+function toggleSound(){
+  soundOn = !soundOn;
+  try{ localStorage.setItem('tx_sound', soundOn?'on':'off'); }catch(e){}
+  const btn = document.getElementById('sound-toggle');
+  if(btn) btn.textContent = soundOn ? '🔊' : '🔇';
+}
+
+// ── Sound primitives ──
+function playTone(freq, type, duration, vol, attack=0.005, decay=0.1, startTime=0){
+  if(!soundOn) return;
+  try{
+    const ctx = getACtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type; osc.frequency.value = freq;
+    const t = ctx.currentTime + startTime;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(vol, t + attack);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+    osc.start(t); osc.stop(t + duration + 0.01);
+  }catch(e){}
+}
+
+function playNoise(duration, vol, freq=800, q=1){
+  if(!soundOn) return;
+  try{
+    const ctx = getACtx();
+    const bufSize = ctx.sampleRate * duration;
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for(let i=0;i<bufSize;i++) data[i] = (Math.random()*2-1);
+    const src = ctx.createBufferSource();
+    const filter = ctx.createBiquadFilter();
+    const gain = ctx.createGain();
+    src.buffer = buf;
+    filter.type = 'bandpass'; filter.frequency.value = freq; filter.Q.value = q;
+    src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    src.start(); src.stop(ctx.currentTime + duration + 0.01);
+  }catch(e){}
+}
+
+// ── Named sounds ──
+
+// Flash appears — low deep thud + sine build
+function sndFlash(){
+  playTone(80, 'sine', 0.25, 0.5);
+  playTone(160, 'square', 0.12, 0.15, 0.001, 0.08);
+}
+
+// Player reacts — sharp satisfying click
+function sndReact(){
+  playNoise(0.06, 0.4, 1200, 3);
+  playTone(900, 'sine', 0.08, 0.3, 0.001, 0.05);
+  playTone(1400, 'sine', 0.06, 0.2, 0.001, 0.04, 0.02);
+}
+
+// Too early — low warning buzz
+function sndTooEarly(){
+  playTone(180, 'sawtooth', 0.18, 0.3, 0.005, 0.15);
+  playTone(140, 'sawtooth', 0.15, 0.25, 0.005, 0.12, 0.05);
+}
+
+// Life lost — heavy descending drop
+function sndLifeLost(){
+  playTone(300, 'sine', 0.3, 0.5, 0.01, 0.25);
+  playTone(200, 'sine', 0.3, 0.4, 0.01, 0.25, 0.08);
+  playTone(120, 'sine', 0.4, 0.35, 0.01, 0.35, 0.18);
+  playNoise(0.2, 0.15, 300, 2, 0.2);
+}
+
+// New personal record — ascending fanfare
+function sndRecord(){
+  [[523,0],[659,0.12],[784,0.24],[1047,0.36],[1319,0.5]].forEach(([f,t])=>{
+    playTone(f, 'sine', 0.22, 0.35, 0.005, 0.18, t);
+  });
+  playNoise(0.15, 0.12, 2000, 5, 0.55);
+}
+
+// Round complete — gentle positive chime
+function sndRoundDone(){
+  playTone(660, 'sine', 0.15, 0.25, 0.005, 0.12);
+  playTone(880, 'sine', 0.12, 0.2, 0.005, 0.10, 0.07);
+}
+
+// Game over — dark ending
+function sndGameOver(){
+  playTone(220, 'sawtooth', 0.4, 0.4, 0.01, 0.35);
+  playTone(165, 'sawtooth', 0.4, 0.35, 0.01, 0.35, 0.12);
+  playTone(110, 'sawtooth', 0.5, 0.3, 0.01, 0.45, 0.26);
+}
+
+// Countdown tick — subtle metronome feel during waiting phase
+function sndTick(){
+  playTone(440, 'sine', 0.04, 0.08, 0.001, 0.03);
+}
+
+// ─────────────────────────────────────────────────────────────
 </script>
 </body>
 </html>
