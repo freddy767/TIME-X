@@ -325,9 +325,45 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .sc-overlay.active{display:flex;}
 .sc-canvas-wrap{border-radius:16px;overflow:hidden;box-shadow:0 0 40px rgba(0,255,136,0.2);}
 .sc-btns{display:flex;gap:10px;}
-/* scrollbar */
-::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-*{-webkit-tap-highlight-color:transparent;}
+/* ── DAILY CHALLENGE ── */
+.daily-card{background:linear-gradient(135deg,rgba(168,85,247,0.12),rgba(168,85,247,0.04));border:2px solid rgba(168,85,247,0.35);border-radius:18px;padding:22px 24px;cursor:pointer;transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);position:relative;overflow:hidden;margin-top:16px;}
+.daily-card:hover{transform:translateY(-4px) scale(1.01);border-color:rgba(168,85,247,0.6);box-shadow:0 0 28px rgba(168,85,247,0.2);}
+.daily-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(168,85,247,0.08),transparent);pointer-events:none;}
+.daily-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.daily-card-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.1em;color:#a855f7;}
+.daily-card-badge{font-size:9px;letter-spacing:0.22em;text-transform:uppercase;padding:4px 10px;border-radius:100px;border:1px solid rgba(168,85,247,0.4);color:#a855f7;background:rgba(168,85,247,0.08);}
+.daily-card-badge.done{border-color:rgba(0,255,136,0.4);color:var(--accent);background:rgba(0,255,136,0.08);}
+.daily-challenge-name{font-size:15px;color:var(--text);margin-bottom:4px;font-weight:500;}
+.daily-challenge-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.daily-progress-row{display:flex;align-items:center;gap:10px;margin-top:12px;}
+.daily-prog-track{flex:1;height:5px;background:rgba(168,85,247,0.15);border-radius:3px;overflow:hidden;}
+.daily-prog-fill{height:100%;background:linear-gradient(90deg,#a855f7,#c084fc);border-radius:3px;transition:width 0.5s ease;}
+.daily-prog-label{font-size:10px;color:var(--muted);white-space:nowrap;}
+/* daily challenge screen */
+.dc-hero{text-align:center;padding:28px 0 22px;border-bottom:1px solid var(--border);margin-bottom:24px;}
+.dc-icon{font-size:52px;margin-bottom:10px;}
+.dc-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:0.08em;color:#a855f7;}
+.dc-subtitle{font-size:12px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-top:4px;}
+.dc-target-box{background:rgba(168,85,247,0.07);border:1px solid rgba(168,85,247,0.25);border-radius:14px;padding:20px;margin-bottom:20px;text-align:center;}
+.dc-target-label{font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.dc-target-val{font-family:'Bebas Neue',sans-serif;font-size:38px;color:#a855f7;line-height:1;}
+.dc-target-sub{font-size:12px;color:var(--muted);margin-top:4px;}
+.dc-tasks{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.dc-task{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;transition:border-color 0.2s;}
+.dc-task.completed{border-color:rgba(0,255,136,0.35);background:rgba(0,255,136,0.03);}
+.dc-task.active{border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.04);}
+.dc-task-icon{font-size:22px;flex-shrink:0;}
+.dc-task-info{flex:1;}
+.dc-task-name{font-size:13px;color:var(--text);}
+.dc-task.completed .dc-task-name{color:var(--muted);text-decoration:line-through;}
+.dc-task-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.dc-task-status{font-size:18px;flex-shrink:0;}
+.dc-result-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.dc-result-row:last-child{border-bottom:none;}
+.dc-result-label{font-size:12px;color:var(--muted);}
+.dc-result-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);}
+.dc-score-big{font-family:'Bebas Neue',sans-serif;font-size:64px;color:#a855f7;text-shadow:0 0 30px rgba(168,85,247,0.4);text-align:center;line-height:1;}
+.dc-timer{font-size:11px;color:var(--muted);text-align:center;letter-spacing:0.15em;margin-top:8px;}
 </style>
 </head>
 <body>
@@ -396,6 +432,45 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <button class="btn btn-secondary" onclick="showScreen('screen-leaderboard')">🏆 Leaderboard</button>
       <button class="btn btn-secondary" onclick="showScreen('screen-history')">📋 History</button>
     </div>
+    <!-- Daily Challenge Card -->
+    <div class="daily-card" onclick="showScreen('screen-daily')">
+      <div class="daily-card-header">
+        <div class="daily-card-title">🎯 Daily Challenge</div>
+        <div class="daily-card-badge" id="dc-home-badge">NEW</div>
+      </div>
+      <div class="daily-challenge-name" id="dc-home-name">Loading...</div>
+      <div class="daily-challenge-desc" id="dc-home-desc">Complete today's personalised challenge</div>
+      <div class="daily-progress-row">
+        <div class="daily-prog-track"><div class="daily-prog-fill" id="dc-home-prog" style="width:0%"></div></div>
+        <div class="daily-prog-label" id="dc-home-prog-label">0/3 tasks</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAILY CHALLENGE SCREEN -->
+  <div class="screen" id="screen-daily">
+    <button class="btn btn-back" onclick="showScreen('screen-mode')">← Back</button>
+    <div class="dc-hero">
+      <div class="dc-icon" id="dc-icon">🎯</div>
+      <div class="dc-title" id="dc-title">Daily Challenge</div>
+      <div class="dc-subtitle" id="dc-subtitle">Today's personalised tests</div>
+      <div class="dc-timer" id="dc-timer"></div>
+    </div>
+    <div class="dc-target-box">
+      <div class="dc-target-label">Your Personal Target Today</div>
+      <div class="dc-target-val" id="dc-target-val">—</div>
+      <div class="dc-target-sub" id="dc-target-sub">Based on your recent average</div>
+    </div>
+    <div class="dc-tasks" id="dc-tasks"></div>
+    <div id="dc-results-wrap" style="display:none;">
+      <div class="dc-score-big" id="dc-final-score">0</div>
+      <div style="font-size:11px;color:var(--muted);text-align:center;letter-spacing:0.15em;margin-bottom:20px;">DAILY SCORE</div>
+      <div class="score-section">
+        <h3>Today's Results</h3>
+        <div id="dc-results-list"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="dc-start-btn" onclick="startDailyChallenge()">▶ Start Challenge</button>
   </div>
 
   <!-- QUICKTAP SETUP -->
@@ -676,6 +751,7 @@ function showScreen(id){
   if(id==='screen-profile') renderProfile();
   if(id==='screen-leaderboard'){renderLeaderboard('qt');document.querySelectorAll('.lb-tab').forEach((t,i)=>{t.classList.toggle('active',i===0);});}
   if(id==='screen-history') renderHistory();
+  if(id==='screen-daily'){ loadDailyChallenge(); renderDailyScreen(); }
   if(id==='screen-mode') updateStreak();
 }
 function goHome(){
@@ -686,28 +762,28 @@ function goHome(){
 function clearWT(){ if(waitTimer){clearTimeout(waitTimer);waitTimer=null;} }
 
 // Check first run on page load
-window.addEventListener('load', ()=>{ checkFirstRun(); });
+window.addEventListener('load', ()=>{ checkFirstRun(); loadDailyChallenge(); });
 
 function togglePause(){
   paused=!paused;
   const overlay=document.getElementById('pause-overlay');
   overlay.classList.toggle('active',paused);
+  const isQtMode=currentMode==='qt'||currentMode==='dc_qt'||(currentMode==='sv'&&svSub==='qt')||(currentMode==='dc_sv'&&svSub==='qt');
+  const isBtMode=currentMode==='bt'||currentMode==='dc_bt'||(currentMode==='sv'&&svSub==='bt')||(currentMode==='dc_sv'&&svSub==='bt');
   if(!paused){
-    // resume — restart the current round's timer
-    if(currentMode==='qt'||currentMode==='sv'&&svSub==='qt'){
+    if(isQtMode){
       if(gamePhase==='waiting'){
         waitTimer=setTimeout(()=>{
           if(gamePhase==='waiting'){
-            if(currentMode==='sv') svQtGo(); else qtPhase('go');
+            if(currentMode==='sv'||currentMode==='dc_sv') svQtGo(); else qtPhase('go');
           }
         },1600+Math.random()*2400);
       }
-    } else if((currentMode==='bt'||currentMode==='sv'&&svSub==='bt')&&btSt==='driving'){
+    } else if(isBtMode&&btSt==='driving'){
       btLastTs=performance.now();
       btAnim=requestAnimationFrame(btLoop);
     }
   } else {
-    // pause — stop timers and animation
     clearWT();
     if(btAnim){cancelAnimationFrame(btAnim);btAnim=null;}
   }
@@ -730,9 +806,9 @@ document.addEventListener('keydown',e=>{
 
   if(e.code==='Space'&&gamePhase!=='idle'){
     e.preventDefault();
-    if(currentMode==='qt') qtClick();
-    else if(currentMode==='bt') btClick();
-    else if(currentMode==='sv') svClick();
+    if(currentMode==='qt'||currentMode==='dc_qt') qtClick();
+    else if(currentMode==='bt'||currentMode==='dc_bt') btClick();
+    else if(currentMode==='sv'||currentMode==='dc_sv') svClick();
   }
 });
 
@@ -952,11 +1028,13 @@ function markChip(sid,idx,early,ms){
 
 // ── Shared results ──
 function showResults(modeName){
+  // Intercept for daily challenge mode
+  if(window._dcMode){ finishDailyTask([...times]); return; }
   const valid=times.filter(t=>!t.tooEarly).map(t=>t.ms);
   if(!valid.length){goHome();return;}
   const avg=Math.round(valid.reduce((a,b)=>a+b,0)/valid.length);
   const best=Math.min(...valid),worst=Math.max(...valid);
-  const rk=currentMode==='qt'?'tx_qt':'tx_bt';
+  const rk=currentMode==='qt'||currentMode==='dc_qt'?'tx_qt':'tx_bt';
   let rec=null;try{rec=JSON.parse(localStorage.getItem(rk));}catch(e){}
   const isRec=!rec||avg<rec.avgMs;
   if(isRec){saveRecord(rk,totalRounds,avg);setTimeout(sndRecord,300);}
@@ -1034,9 +1112,11 @@ function doShare(){
   }).catch(()=>{});
 }
 function playAgain(){
-  clearWT();btStop();times=[];currentRound=0;
+  clearWT();btStop();svStop();times=[];currentRound=0;
   document.getElementById('res-score-fill').style.width='0%';
-  if(currentMode==='qt')qtGameStart();else btGameStart();
+  if(currentMode==='qt'||currentMode==='dc_qt') qtGameStart();
+  else if(currentMode==='bt'||currentMode==='dc_bt') btGameStart();
+  else btGameStart();
 }
 
 // ═══════════════════════ QUICKTAP ════════════════════════
@@ -1837,7 +1917,7 @@ function svQtClick(){ svClick(); }
 
 function svClick(){
   if(paused) return;
-  if(currentMode!=='sv') return;
+  if(currentMode!=='sv'&&currentMode!=='dc_sv') return;
   if(svSub==='qt'){
     if(gamePhase==='waiting'){
       clearWT();
@@ -2045,6 +2125,8 @@ function svDrawScene(){
 function svEndGame(){
   svStop(); svBtStop(); clearWT(); gamePhase='idle';
   sndGameOver();
+  // If in daily challenge mode, hand off to finishDailyTask
+  if(window._dcMode){ finishDailyTask([...svTimes]); return; }
   const validMs=svTimes.filter(t=>!t.tooEarly).map(t=>t.ms);
   const avg=validMs.length?Math.round(validMs.reduce((a,b)=>a+b,0)/validMs.length):0;
   const best=validMs.length?Math.min(...validMs):0;
@@ -2337,13 +2419,6 @@ function setScoreCardData(mode, avg, best, score, rounds, rating){
   _scData={mode,avg,best,score,rounds,rating,ageGroup:`Age ${age} (avg ${b.mean}ms)`};
 }
 
-// ═══════════════════════ HOOK INTO EXISTING SYSTEMS ════════════════════════
-// Wrap showResults to add animations, session save, leaderboard save
-const _origShowResults=showResults;
-showResults=function(modeName){
-  _origShowResults.call(this,modeName);
-};
-
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let _actx = null;
 let soundOn = true;
@@ -2456,7 +2531,291 @@ function sndTick(){
   playTone(440, 'sine', 0.04, 0.08, 0.001, 0.03);
 }
 
-// ─────────────────────────────────────────────────────────────
+// ═══════════════════════ DAILY CHALLENGE ════════════════════════
+
+// Challenge types — mix of different mechanics
+const DC_CHALLENGE_TYPES = [
+  {
+    id:'speed_run',
+    name:'Speed Run',
+    icon:'⚡',
+    desc:'Complete {rounds} rounds of QuickTap and beat your target average',
+    mode:'qt', rounds:5,
+    goal:(target)=>`Average under ${target}ms`,
+    check:(times,target)=>{ const v=times.filter(t=>!t.tooEarly).map(t=>t.ms); return v.length>=3&&Math.round(v.reduce((a,b)=>a+b,0)/v.length)<=target; },
+    score:(times,target)=>{ const v=times.filter(t=>!t.tooEarly).map(t=>t.ms); if(!v.length)return 0; const avg=Math.round(v.reduce((a,b)=>a+b,0)/v.length); return Math.max(0,Math.round(((target-avg)/target)*200+100)); }
+  },
+  {
+    id:'consistency',
+    name:'Steady Hands',
+    icon:'🎯',
+    desc:'Keep all {rounds} taps within 40ms of each other',
+    mode:'qt', rounds:6,
+    goal:()=>'All times within 40ms spread',
+    check:(times)=>{ const v=times.filter(t=>!t.tooEarly).map(t=>t.ms); if(v.length<4)return false; return Math.max(...v)-Math.min(...v)<=40; },
+    score:(times)=>{ const v=times.filter(t=>!t.tooEarly).map(t=>t.ms); if(!v.length)return 0; const spread=Math.max(...v)-Math.min(...v); return Math.max(0,Math.round((1-spread/100)*300)); }
+  },
+  {
+    id:'no_early',
+    name:'Clean Sweep',
+    icon:'✨',
+    desc:'Complete {rounds} rounds with zero early presses',
+    mode:'qt', rounds:5,
+    goal:()=>'Zero too-early presses',
+    check:(times)=>times.length>0&&times.every(t=>!t.tooEarly),
+    score:(times,target)=>{ const v=times.filter(t=>!t.tooEarly).map(t=>t.ms); if(!v.length)return 0; const avg=Math.round(v.reduce((a,b)=>a+b,0)/v.length); return Math.round(250+(target-avg)*0.5); }
+  },
+  {
+    id:'brake_master',
+    name:'Brake Master',
+    icon:'🏎',
+    desc:'Complete {rounds} BrakeTest rounds and beat your target',
+    mode:'bt', rounds:5,
+    goal:(target)=>`Average under ${target}ms`,
+    check:(times,target)=>{ const v=times.filter(t=>!t.tooEarly).map(t=>t.ms); return v.length>=3&&Math.round(v.reduce((a,b)=>a+b,0)/v.length)<=target; },
+    score:(times,target)=>{ const v=times.filter(t=>!t.tooEarly).map(t=>t.ms); if(!v.length)return 0; const avg=Math.round(v.reduce((a,b)=>a+b,0)/v.length); return Math.max(0,Math.round(((target-avg)/target)*200+100)); }
+  },
+  {
+    id:'personal_best',
+    name:'Beat Yourself',
+    icon:'🏆',
+    desc:'Set a new personal best average in {rounds} rounds',
+    mode:'qt', rounds:5,
+    goal:()=>'New personal best average',
+    check:(times)=>{ const v=times.filter(t=>!t.tooEarly).map(t=>t.ms); if(v.length<3)return false; const avg=Math.round(v.reduce((a,b)=>a+b,0)/v.length); try{const r=JSON.parse(localStorage.getItem('tx_qt'));return!r||avg<r.avgMs;}catch(e){return false;} },
+    score:(times)=>{ const v=times.filter(t=>!t.tooEarly).map(t=>t.ms); if(!v.length)return 0; return 350; }
+  },
+  {
+    id:'lightning',
+    name:'Lightning Round',
+    icon:'⚡',
+    desc:'Get at least one reaction under {lightning}ms',
+    mode:'qt', rounds:8,
+    goal:(target,extra)=>`At least one reaction under ${extra}ms`,
+    check:(times,target,extra)=>times.some(t=>!t.tooEarly&&t.ms<extra),
+    score:(times,target,extra)=>{ const best=Math.min(...times.filter(t=>!t.tooEarly).map(t=>t.ms)); return Math.max(0,Math.round((1-best/extra)*400+150)); }
+  },
+  {
+    id:'survivor',
+    name:'Survival Run',
+    icon:'💀',
+    desc:'Survive at least {rounds} rounds in Survival mode',
+    mode:'sv', rounds:10,
+    goal:(t,e,rounds)=>`Survive ${rounds}+ rounds`,
+    check:(times,t,e,rounds)=>times.filter(t=>!t.tooEarly).length>=rounds,
+    score:(times)=>times.filter(t=>!t.tooEarly).length*25
+  }
+];
+
+let dcState = null; // current daily challenge state
+let dcCurrentTask = 0;
+let dcTaskResults = [];
+let dcRunning = false;
+
+function getDayKey(){ return new Date().toDateString(); }
+
+function getPlayerAverage(){
+  // Get avg from profile history or fall back to age benchmark
+  try{
+    const hist=JSON.parse(localStorage.getItem('tx_history')||'[]');
+    const qtGames=hist.filter(h=>h.mode==='qt'&&h.avgMs).slice(0,10);
+    if(qtGames.length>=2) return Math.round(qtGames.reduce((a,h)=>a+h.avgMs,0)/qtGames.length);
+  }catch(e){}
+  // Fall back to age benchmark + 20ms (slightly above average)
+  return bench(age).mean+20;
+}
+
+function generateDailyChallenge(){
+  const today=getDayKey();
+  // Check if already have today's challenge
+  try{
+    const saved=JSON.parse(localStorage.getItem('tx_daily'));
+    if(saved&&saved.day===today) return saved;
+  }catch(e){}
+
+  // Seed random with date so everyone gets same challenge order
+  const dateNum=new Date().getFullYear()*10000+((new Date().getMonth()+1)*100)+new Date().getDate();
+  const seededRand=(n)=>((dateNum*9301+49297)%233280)/233280*n;
+
+  const playerAvg=getPlayerAverage();
+  // Target is player's avg with slight challenge (5% harder)
+  const target=Math.round(playerAvg*0.95);
+  // Lightning target is player's best-ish time
+  const lightning=Math.round(playerAvg*0.82);
+
+  // Pick 3 tasks for today — varied types, seeded
+  const pool=[...DC_CHALLENGE_TYPES];
+  const picks=[];
+  let idx=Math.floor(seededRand(pool.length));
+  for(let i=0;i<3;i++){
+    picks.push(pool[idx%pool.length]);
+    idx=Math.floor((idx*seededRand(pool.length)+1)%pool.length+(i+1)*7)%pool.length;
+    // ensure no duplicates
+    while(picks.length>1&&picks[picks.length-1].id===picks[picks.length-2].id){
+      idx=(idx+1)%pool.length; picks[picks.length-1]=pool[idx];
+    }
+  }
+  // Make sure we have variety — at least one bt if possible
+  if(!picks.some(p=>p.mode==='bt')&&picks.length===3){
+    picks[2]=DC_CHALLENGE_TYPES.find(t=>t.id==='brake_master');
+  }
+
+  const challenge={
+    day:today,
+    tasks:picks.map(t=>({...t})),
+    target, lightning,
+    completed:false,
+    tasksCompleted:[false,false,false],
+    totalScore:0,
+    playerAvgAtTime:playerAvg
+  };
+
+  try{localStorage.setItem('tx_daily',JSON.stringify(challenge));}catch(e){}
+  return challenge;
+}
+
+function loadDailyChallenge(){
+  dcState=generateDailyChallenge();
+  updateDailyHomeCard();
+  if(document.getElementById('screen-daily').classList.contains('active')) renderDailyScreen();
+}
+
+function updateDailyHomeCard(){
+  if(!dcState) return;
+  const done=dcState.tasksCompleted.filter(Boolean).length;
+  const total=dcState.tasks.length;
+  const badge=document.getElementById('dc-home-badge');
+  const name=document.getElementById('dc-home-name');
+  const desc=document.getElementById('dc-home-desc');
+  const prog=document.getElementById('dc-home-prog');
+  const progLbl=document.getElementById('dc-home-prog-label');
+  if(badge){ badge.textContent=done===total?'✓ DONE':done>0?'IN PROGRESS':'NEW'; badge.className='daily-card-badge'+(done===total?' done':''); }
+  if(name) name.textContent=dcState.tasks[0].name+(total>1?` + ${total-1} more`:'');
+  if(desc) desc.textContent=`Target: beat ${dcState.target}ms average · ${done}/${total} complete`;
+  if(prog) prog.style.width=(done/total*100)+'%';
+  if(progLbl) progLbl.textContent=`${done}/${total} tasks`;
+}
+
+function renderDailyScreen(){
+  if(!dcState) return;
+  const done=dcState.tasksCompleted.filter(Boolean).length;
+  const allDone=done===dcState.tasks.length;
+
+  // Timer until reset
+  const now=new Date(), midnight=new Date(now); midnight.setHours(24,0,0,0);
+  const diff=midnight-now;
+  const hrs=Math.floor(diff/3600000), mins=Math.floor((diff%3600000)/60000);
+  const timerEl=document.getElementById('dc-timer');
+  if(timerEl) timerEl.textContent=`Resets in ${hrs}h ${mins}m`;
+
+  document.getElementById('dc-title').textContent='Daily Challenge';
+  document.getElementById('dc-subtitle').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('dc-target-val').textContent=dcState.target+'ms';
+  document.getElementById('dc-target-sub').textContent=`Your recent avg: ${dcState.playerAvgAtTime}ms · Target is 5% faster`;
+
+  // Tasks
+  const tasksEl=document.getElementById('dc-tasks');
+  tasksEl.innerHTML='';
+  dcState.tasks.forEach((task,i)=>{
+    const isActive=i===dcCurrentTask&&!allDone;
+    const isDone=dcState.tasksCompleted[i];
+    const div=document.createElement('div');
+    div.className='dc-task'+(isDone?' completed':isActive?' active':'');
+    const extra=task.id==='lightning'?dcState.lightning:null;
+    const rounds=task.id==='survivor'?8:task.rounds;
+    div.innerHTML=`
+      <div class="dc-task-icon">${task.icon}</div>
+      <div class="dc-task-info">
+        <div class="dc-task-name">${task.name}</div>
+        <div class="dc-task-desc">${task.goal(dcState.target,extra,rounds)}</div>
+      </div>
+      <div class="dc-task-status">${isDone?'✅':isActive?'▶':'⏳'}</div>`;
+    tasksEl.appendChild(div);
+  });
+
+  // Start button
+  const startBtn=document.getElementById('dc-start-btn');
+  if(allDone){
+    startBtn.style.display='none';
+    document.getElementById('dc-results-wrap').style.display='block';
+    document.getElementById('dc-final-score').textContent=dcState.totalScore;
+    const resultsList=document.getElementById('dc-results-list');
+    resultsList.innerHTML='';
+    dcTaskResults.forEach((r,i)=>{
+      const row=document.createElement('div');
+      row.className='dc-result-row';
+      row.innerHTML=`<div class="dc-result-label">${dcState.tasks[i].icon} ${dcState.tasks[i].name}</div><div class="dc-result-val">${r.passed?'✅ +'+r.score+' pts':'❌ 0 pts'}</div>`;
+      resultsList.appendChild(row);
+    });
+    // Fire confetti on first view
+    if(!dcState._confettiFired){dcState._confettiFired=true;setTimeout(fireConfetti,200);}
+  } else {
+    startBtn.style.display='block';
+    document.getElementById('dc-results-wrap').style.display='none';
+    const task=dcState.tasks[dcCurrentTask];
+    startBtn.textContent=`▶ Start: ${task.name}`;
+  }
+}
+
+function startDailyChallenge(){
+  if(!dcState||dcRunning) return;
+  const task=dcState.tasks[dcCurrentTask];
+  dcRunning=true;
+
+  // Set up the right mode
+  if(task.mode==='qt'){
+    currentMode='dc_qt';
+    totalRounds=task.rounds||5;
+    times=[];currentRound=0;
+    showScreen('screen-qt-game');
+    buildStrip('qt-strip');
+    document.getElementById('qt-htp').style.display='none';
+    // Override qtNext to end back to daily
+    window._dcMode=true;
+    qtNext();
+  } else if(task.mode==='bt'){
+    currentMode='dc_bt';
+    totalRounds=task.rounds||5;
+    times=[];currentRound=0;
+    roadScroll=0;
+    showScreen('screen-bt-game');
+    buildStrip('bt-strip');
+    document.getElementById('bt-htp').style.display='none';
+    window._dcMode=true;
+    btRound();
+  } else if(task.mode==='sv'){
+    currentMode='dc_sv';
+    svSub='qt';svMaxLives=3;svLives=3;svRound=0;svScore=0;
+    svTimes=[];svRefAvg=null;
+    showScreen('screen-sv-game');
+    document.getElementById('sv-qt-zone').style.display='';
+    document.getElementById('sv-bt-scene').style.display='none';
+    buildStrip('sv-strip');
+    window._dcMode=true;
+    svNextRound();
+  }
+}
+
+function finishDailyTask(taskTimes){
+  dcRunning=false;
+  window._dcMode=false;
+  const task=dcState.tasks[dcCurrentTask];
+  const extra=task.id==='lightning'?dcState.lightning:null;
+  const rounds=task.id==='survivor'?8:task.rounds;
+  const passed=task.check(taskTimes,dcState.target,extra,rounds);
+  const pts=passed?task.score(taskTimes,dcState.target,extra,rounds):0;
+  dcTaskResults[dcCurrentTask]={passed,score:Math.round(pts)};
+  dcState.tasksCompleted[dcCurrentTask]=passed||true; // mark attempted regardless
+  dcState.totalScore=(dcState.totalScore||0)+Math.round(pts);
+  if(dcCurrentTask<dcState.tasks.length-1) dcCurrentTask++;
+  try{localStorage.setItem('tx_daily',JSON.stringify(dcState));}catch(e){}
+  updateDailyHomeCard();
+  // Show result toast then go back to daily screen
+  showToast(passed?`✅ Task complete! +${Math.round(pts)} pts`:'❌ Task failed — try the next one','success');
+  setTimeout(()=>{ currentMode='qt'; showScreen('screen-daily'); renderDailyScreen(); },1200);
+}
+
+// Hook survival end for daily — handled inline in svEndGame
 </script>
 </body>
 </html>
