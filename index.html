@@ -15,9 +15,10 @@
 <style>
 :root{--bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--border:#2a2a3e;--accent:#00ff88;--accent2:#ff3c6e;--accent3:#ffcb47;--text:#e8e8f0;--muted:#6b6b8a;--glow:0 0 20px rgba(0,255,136,0.4);--glow-red:0 0 20px rgba(255,60,110,0.4);}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;overflow-x:hidden;overflow-y:auto;}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(0,255,136,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 100% 100%,rgba(255,60,110,0.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
-.container{max-width:800px;margin:0 auto;padding:36px 24px;position:relative;z-index:1;}
+html{background:var(--bg);}
+.container{max-width:800px;margin:0 auto;padding:36px 24px;position:relative;z-index:1;min-height:100vh;}
 .screen{display:none;animation:fadeIn 0.3s ease;}.screen.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .header{text-align:center;margin-bottom:44px;}
@@ -364,6 +365,66 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .dc-result-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);}
 .dc-score-big{font-family:'Bebas Neue',sans-serif;font-size:64px;color:#a855f7;text-shadow:0 0 30px rgba(168,85,247,0.4);text-align:center;line-height:1;}
 .dc-timer{font-size:11px;color:var(--muted);text-align:center;letter-spacing:0.15em;margin-top:8px;}
+/* ── XP CHALLENGES ── */
+.xpc-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px;transition:all 0.2s;cursor:pointer;position:relative;overflow:hidden;}
+.xpc-card:hover{transform:translateY(-2px);}
+.xpc-card.available:hover{border-color:rgba(0,255,136,0.4);box-shadow:0 0 16px rgba(0,255,136,0.1);}
+.xpc-card.completed{border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.03);cursor:default;}
+.xpc-card.locked{opacity:0.45;cursor:not-allowed;}
+.xpc-card.active-run{border-color:var(--accent3);background:rgba(255,203,71,0.04);}
+.xpc-row{display:flex;align-items:center;gap:12px;}
+.xpc-icon{font-size:24px;flex-shrink:0;}
+.xpc-info{flex:1;}
+.xpc-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.xpc-desc{font-size:11px;color:var(--muted);line-height:1.4;}
+.xpc-right{text-align:right;flex-shrink:0;}
+.xpc-xp{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent3);}
+.xpc-status{font-size:18px;margin-top:2px;}
+.xpc-rank-tag{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;padding:2px 8px;border-radius:4px;border:1px solid;margin-top:4px;display:inline-block;}
+.xpc-section-title{font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;}
+.xpc-refresh-note{font-size:10px;color:var(--muted);text-align:center;letter-spacing:0.15em;margin-top:16px;padding:10px;}
+.xpc-section-title{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin:18px 0 10px;}
+.xpc-refresh-note{font-size:11px;color:var(--muted);text-align:center;padding:12px;letter-spacing:0.1em;}
+</style>
+.xp-bar-wrap{margin-bottom:24px;}
+.xp-bar-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.xp-rank-label{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;}
+.xp-next-label{font-size:10px;color:var(--muted);letter-spacing:0.15em;}
+.xp-track{height:13px;background:var(--surface2);border-radius:7px;overflow:hidden;}
+.xp-fill{height:100%;border-radius:7px;transition:width 1.4s cubic-bezier(0.16,1,0.3,1);position:relative;}
+.xp-fill::after{content:'';position:absolute;top:0;right:0;width:20px;height:100%;background:rgba(255,255,255,0.3);border-radius:0 7px 7px 0;filter:blur(4px);}
+.xp-sub{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--muted);}
+.rank-showcase{border-radius:16px;padding:22px;margin-bottom:20px;text-align:center;position:relative;overflow:hidden;}
+.rank-showcase::before{content:'';position:absolute;inset:0;opacity:0.05;background:radial-gradient(circle at 50% 0%,white,transparent 70%);}
+.rank-emblem{font-size:50px;margin-bottom:8px;display:block;}
+.rank-name-big{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:0.12em;line-height:1;}
+.rank-tier-label{font-size:10px;letter-spacing:0.28em;text-transform:uppercase;opacity:0.65;margin-top:4px;}
+.promo-hero{text-align:center;padding:24px 0 20px;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.promo-from-to{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:14px;}
+.promo-rank-box{text-align:center;}
+.promo-rank-icon{font-size:30px;}
+.promo-rank-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.08em;margin-top:4px;}
+.promo-arrow{font-size:22px;color:var(--muted);}
+.promo-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:0.1em;color:var(--accent3);}
+.promo-subtitle{font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px;}
+.promo-tasks{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.promo-task{padding:15px 17px;background:var(--surface);border:2px solid var(--border);border-radius:13px;transition:all 0.2s;}
+.promo-task.passed{border-color:rgba(0,255,136,0.4);background:rgba(0,255,136,0.04);}
+.promo-task.failed{border-color:rgba(255,60,110,0.3);}
+.promo-task.active{border-color:var(--accent3);}
+.pt-header{display:flex;align-items:center;gap:11px;margin-bottom:5px;}
+.pt-icon{font-size:20px;flex-shrink:0;}
+.pt-name{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:0.07em;flex:1;}
+.pt-status{font-size:18px;}
+.pt-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+.pt-result{font-size:12px;margin-top:5px;font-weight:500;}
+.rankup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:400;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:30px;}
+.rankup-overlay.active{display:flex;}
+.rankup-icon{font-size:76px;animation:popIn 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes popIn{0%{transform:scale(0);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.rankup-title{font-family:'Bebas Neue',sans-serif;font-size:50px;letter-spacing:0.1em;color:var(--accent3);animation:slideUp 0.5s 0.3s both;}
+.rankup-new-rank{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:0.12em;animation:slideUp 0.5s 0.5s both;}
+.rankup-sub{font-size:12px;color:var(--muted);letter-spacing:0.15em;animation:slideUp 0.5s 0.7s both;margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -428,9 +489,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
         <div class="mode-tag">Endurance Mode</div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;">
-      <button class="btn btn-secondary" onclick="showScreen('screen-leaderboard')">🏆 Leaderboard</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:20px;">
+      <button class="btn btn-secondary" onclick="showScreen('screen-leaderboard')">🏆 Boards</button>
       <button class="btn btn-secondary" onclick="showScreen('screen-history')">📋 History</button>
+      <button class="btn btn-secondary" onclick="showScreen('screen-challenges')">⚡ Challenges</button>
     </div>
     <!-- Daily Challenge Card -->
     <div class="daily-card" onclick="showScreen('screen-daily')">
@@ -641,7 +703,15 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <button class="btn" style="width:100%;background:rgba(255,60,110,0.07);color:var(--accent2);border:1px solid rgba(255,60,110,0.2);border-radius:10px;padding:13px;" onclick="clearHistory()">🗑 Clear History</button>
   </div>
 
-  <!-- SURVIVAL SETUP -->
+  <!-- CHALLENGES SCREEN -->
+  <div class="screen" id="screen-challenges">
+    <button class="btn btn-back" onclick="showScreen('screen-mode')">← Back</button>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:0.1em;color:var(--accent3);margin-bottom:4px;">⚡ Challenges</div>
+    <div style="font-size:11px;color:var(--muted);letter-spacing:0.15em;margin-bottom:6px;">Complete challenges to earn XP and level up faster</div>
+    <div id="xpc-rank-info" style="margin-bottom:16px;"></div>
+    <div id="xpc-list"></div>
+    <div class="xpc-refresh-note">Challenges refresh weekly · Harder ranks unlock harder challenges</div>
+  </div>
   <div class="screen" id="screen-sv-setup">
     <button class="btn btn-back" onclick="showScreen('screen-mode')">← Back</button>
     <div class="record-banner hidden" id="sv-record-banner">
@@ -729,6 +799,32 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
 </div>
 
+  <!-- PROMOTION CHALLENGE SCREEN -->
+  <div class="screen" id="screen-promo">
+    <button class="btn btn-back" onclick="showScreen('screen-profile')">← Back to Profile</button>
+    <div class="promo-hero">
+      <div class="promo-from-to" id="promo-from-to"></div>
+      <div class="promo-title">PROMOTION CHALLENGE</div>
+      <div class="promo-subtitle" id="promo-subtitle">Complete all 3 tasks to rank up. You must pass all 3 in one session.</div>
+    </div>
+    <div class="promo-tasks" id="promo-tasks"></div>
+    <div id="promo-result-wrap" style="display:none;text-align:center;margin-bottom:22px;">
+      <div id="promo-result-msg" style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.1em;margin-bottom:8px;"></div>
+      <div id="promo-result-sub" style="font-size:12px;color:var(--muted);"></div>
+    </div>
+    <button class="btn btn-primary" id="promo-start-btn" onclick="startPromoTask()" style="background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 0 20px rgba(245,158,11,0.3);">▶ Start Challenge</button>
+  </div>
+</div>
+
+<!-- RANK UP OVERLAY -->
+<div class="rankup-overlay" id="rankup-overlay">
+  <div class="rankup-icon" id="rankup-icon">🏆</div>
+  <div class="rankup-title">RANK UP!</div>
+  <div class="rankup-new-rank" id="rankup-new-rank"></div>
+  <div class="rankup-sub" id="rankup-sub"></div>
+  <button class="btn btn-primary" style="width:auto;padding:14px 36px;margin-top:8px;" onclick="dismissRankUp()">Continue →</button>
+</div>
+
 <!-- PAUSE OVERLAY -->
 <div class="pause-overlay" id="pause-overlay">
   <div class="pause-title">PAUSED</div>
@@ -750,7 +846,7 @@ function showScreen(id){
   document.getElementById(id).classList.add('active');
   if(id==='screen-profile') renderProfile();
   if(id==='screen-leaderboard'){renderLeaderboard('qt');document.querySelectorAll('.lb-tab').forEach((t,i)=>{t.classList.toggle('active',i===0);});}
-  if(id==='screen-history') renderHistory();
+  if(id==='screen-challenges') renderChallenges();
   if(id==='screen-daily'){ loadDailyChallenge(); renderDailyScreen(); }
   if(id==='screen-mode') updateStreak();
 }
@@ -810,6 +906,7 @@ document.addEventListener('keydown',e=>{
     else if(currentMode==='bt'||currentMode==='dc_bt') btClick();
     else if(currentMode==='sv'||currentMode==='dc_sv') svClick();
   }
+  // xpc mode uses normal currentMode values so no extra case needed
 });
 
 // ═══════════════════════ PROFILE SYSTEM ════════════════════════
@@ -2125,8 +2222,11 @@ function svDrawScene(){
 function svEndGame(){
   svStop(); svBtStop(); clearWT(); gamePhase='idle';
   sndGameOver();
-  // If in daily challenge mode, hand off to finishDailyTask
+  // If in daily challenge mode or promo mode, hand off
   if(window._dcMode){ finishDailyTask([...svTimes]); return; }
+  if(window._promoMode){ finishPromoTask([...svTimes]); return; }
+  if(window._xpcMode){ finishXPChallenge([...svTimes]); return; }
+  if(window._xpcMode){ finishXPChallenge([...svTimes]); return; }
   const validMs=svTimes.filter(t=>!t.tooEarly).map(t=>t.ms);
   const avg=validMs.length?Math.round(validMs.reduce((a,b)=>a+b,0)/validMs.length):0;
   const best=validMs.length?Math.min(...validMs):0;
@@ -2816,6 +2916,466 @@ function finishDailyTask(taskTimes){
 }
 
 // Hook survival end for daily — handled inline in svEndGame
+
+// ═══════════════════════ XP & RANK SYSTEM ════════════════════════
+
+const RANKS=[
+  {id:'rookie',name:'Rookie',emoji:'🥉',tier:'Starting Out',col:'#cd7f32',bg:'rgba(205,127,50,0.12)',xpToNext:500,
+   promo:[
+    {name:'First Steps',icon:'⚡',desc:'5 rounds of QuickTap, average under your age benchmark +30ms',mode:'qt',rounds:5,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=3&&v.reduce((a,b)=>a+b,0)/v.length<=bench(a).mean+30;}},
+    {name:'Clean Entry',icon:'✨',desc:'5 rounds, zero early presses',mode:'qt',rounds:5,check:(t)=>t.length>=5&&t.every(x=>!x.tooEarly)},
+    {name:'First Lap',icon:'🏎',desc:'5 BrakeTest rounds, average under benchmark +40ms',mode:'bt',rounds:5,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=3&&v.reduce((a,b)=>a+b,0)/v.length<=bench(a).mean+40;}}
+   ]},
+  {id:'contender',name:'Contender',emoji:'🥈',tier:'Finding Your Feet',col:'#94a3b8',bg:'rgba(148,163,184,0.1)',xpToNext:1200,
+   promo:[
+    {name:'Benchmark Beater',icon:'⚡',desc:'8 rounds, average under your exact age benchmark',mode:'qt',rounds:8,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=6&&v.reduce((a,b)=>a+b,0)/v.length<bench(a).mean;}},
+    {name:'Rock Steady',icon:'🎯',desc:'8 rounds, all taps within 35ms of each other',mode:'qt',rounds:8,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=6&&Math.max(...v)-Math.min(...v)<=35;}},
+    {name:'Cockpit Control',icon:'🏎',desc:'8 BrakeTest rounds, average under benchmark +20ms',mode:'bt',rounds:8,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=6&&v.reduce((a,b)=>a+b,0)/v.length<=bench(a).mean+20;}}
+   ]},
+  {id:'intermediate',name:'Intermediate',emoji:'🔵',tier:'Getting Sharp',col:'#6ee7ff',bg:'rgba(110,231,255,0.1)',xpToNext:2500,
+   promo:[
+    {name:'Sub-Benchmark',icon:'⚡',desc:'8 rounds, average 15ms under your age benchmark',mode:'qt',rounds:8,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=6&&v.reduce((a,b)=>a+b,0)/v.length<=bench(a).mean-15;}},
+    {name:'Survivor',icon:'💀',desc:'Survive 12+ rounds in Survival mode',mode:'sv',rounds:15,check:(t)=>t.filter(x=>!x.tooEarly).length>=12},
+    {name:'Precision Driver',icon:'🏎',desc:'8 BrakeTest rounds, every single one under your benchmark',mode:'bt',rounds:8,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=6&&v.reduce((a,b)=>a+b,0)/v.length<bench(a).mean;}}
+   ]},
+  {id:'semipro',name:'Semi-Pro',emoji:'🟣',tier:'Above Average',col:'#a855f7',bg:'rgba(168,85,247,0.1)',xpToNext:5000,
+   promo:[
+    {name:'Elite Territory',icon:'⚡',desc:'10 rounds, average 30ms under your age benchmark',mode:'qt',rounds:10,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=8&&v.reduce((a,b)=>a+b,0)/v.length<=bench(a).mean-30;}},
+    {name:'Ironclad',icon:'🎯',desc:'10 rounds, no early presses, all within 25ms of each other',mode:'qt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=10&&t.every(x=>!x.tooEarly)&&Math.max(...v)-Math.min(...v)<=25;}},
+    {name:'Pro Endurance',icon:'💀',desc:'Survive 20+ rounds without losing a single life',mode:'sv',rounds:25,check:(t)=>t.filter(x=>!x.tooEarly&&!x.lifeLost).length>=20}
+   ]},
+  {id:'professional',name:'Professional',emoji:'🟡',tier:'Top Level',col:'#f5c518',bg:'rgba(245,197,24,0.1)',xpToNext:10000,
+   promo:[
+    {name:'Sub-250',icon:'⚡',desc:'10 rounds, average under 250ms — regardless of age',mode:'qt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=8&&v.reduce((a,b)=>a+b,0)/v.length<250;}},
+    {name:'Flawless',icon:'✨',desc:'10 rounds, no early presses, every single time under 300ms',mode:'qt',rounds:10,check:(t)=>t.every(x=>!x.tooEarly)&&t.every(x=>x.ms<300)},
+    {name:'Machine',icon:'🏎',desc:'10 BrakeTest rounds, average under 260ms',mode:'bt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=8&&v.reduce((a,b)=>a+b,0)/v.length<260;}}
+   ]},
+  {id:'worldclass',name:'World Class',emoji:'👑',tier:'Elite — Top 1%',col:'#00ff88',bg:'rgba(0,255,136,0.1)',xpToNext:null,promo:[]}
+];
+
+function loadXP(){try{return JSON.parse(localStorage.getItem('tx_xp'))||{xp:0,rankIdx:0};}catch(e){return{xp:0,rankIdx:0};}}
+function saveXP(d){try{localStorage.setItem('tx_xp',JSON.stringify(d));}catch(e){}}
+function getCurrentRank(){const d=loadXP();return{rank:RANKS[d.rankIdx||0],rankIdx:d.rankIdx||0,xp:d.xp||0,data:d};}
+
+function getXPInCurrentRank(){
+  const d=loadXP();let used=0;
+  for(let i=0;i<(d.rankIdx||0);i++)used+=RANKS[i].xpToNext||0;
+  return (d.xp||0)-used;
+}
+function getXPToNextRank(){const{rankIdx}=loadXP();return RANKS[rankIdx]?.xpToNext||null;}
+function canAttemptPromo(){
+  const{rankIdx}=loadXP();
+  if(rankIdx>=RANKS.length-1)return false;
+  const xpIn=getXPInCurrentRank(),xpTo=getXPToNextRank();
+  return xpTo&&xpIn>=xpTo;
+}
+
+function awardXP(mode,avgMs,score,rounds){
+  const d=loadXP();
+  let xp=rounds*5+Math.round((score||0)*0.8);
+  if(avgMs){const b=bench(age);const z=(avgMs-b.mean)/b.sd;if(z<0)xp+=Math.round(Math.abs(z)*30);}
+  xp=Math.max(10,Math.round(xp));
+  d.xp=(d.xp||0)+xp;saveXP(d);return xp;
+}
+
+// Promo state
+let promoState={taskIdx:0,results:[],running:false};
+
+function showPromoScreen(){
+  const{rank,rankIdx}=getCurrentRank();
+  const next=RANKS[rankIdx+1];if(!next)return;
+  promoState={taskIdx:0,results:[],running:false};
+  const ft=document.getElementById('promo-from-to');
+  ft.innerHTML=`<div class="promo-rank-box"><div class="promo-rank-icon">${rank.emoji}</div><div class="promo-rank-name" style="color:${rank.col}">${rank.name}</div></div><div class="promo-arrow">→</div><div class="promo-rank-box"><div class="promo-rank-icon">${next.emoji}</div><div class="promo-rank-name" style="color:${next.col}">${next.name}</div></div>`;
+  renderPromoTasks();
+  document.getElementById('promo-result-wrap').style.display='none';
+  const btn=document.getElementById('promo-start-btn');
+  btn.style.display='block';btn.textContent=`▶ Start Task 1: ${rank.promo[0].name}`;
+  showScreen('screen-promo');
+}
+
+function renderPromoTasks(){
+  const{rank}=getCurrentRank();
+  const el=document.getElementById('promo-tasks');el.innerHTML='';
+  rank.promo.forEach((task,i)=>{
+    const res=promoState.results[i];
+    const isActive=i===promoState.taskIdx&&!promoState.running&&!res;
+    const div=document.createElement('div');
+    div.className='promo-task'+(res?(res.passed?' passed':' failed'):isActive?' active':'');
+    const icon=res?(res.passed?'✅':'❌'):isActive?'▶':'⏳';
+    const resultHtml=res?`<div class="pt-result" style="color:${res.passed?'var(--accent)':'var(--accent2)'}">${res.passed?'✓ Passed':'✗ Failed'}${res.detail?' — '+res.detail:''}</div>`:'';
+    div.innerHTML=`<div class="pt-header"><div class="pt-icon">${task.icon}</div><div class="pt-name">${task.name}</div><div class="pt-status">${icon}</div></div><div class="pt-desc">${task.desc}</div>${resultHtml}`;
+    el.appendChild(div);
+  });
+}
+
+function startPromoTask(){
+  if(promoState.running)return;
+  const{rank}=getCurrentRank();
+  const task=rank.promo[promoState.taskIdx];if(!task)return;
+  promoState.running=true;window._promoMode=true;
+  if(task.mode==='qt'){currentMode='qt';totalRounds=task.rounds;times=[];currentRound=0;showScreen('screen-qt-game');document.getElementById('qt-htp').style.display='none';buildStrip('qt-strip');qtNext();}
+  else if(task.mode==='bt'){currentMode='bt';totalRounds=task.rounds;times=[];currentRound=0;roadScroll=0;showScreen('screen-bt-game');document.getElementById('bt-htp').style.display='none';buildStrip('bt-strip');btRound();}
+  else if(task.mode==='sv'){currentMode='sv';svSub='qt';svMaxLives=3;svLives=3;svRound=0;svScore=0;svTimes=[];svRefAvg=null;showScreen('screen-sv-game');document.getElementById('sv-qt-zone').style.display='';document.getElementById('sv-bt-scene').style.display='none';buildStrip('sv-strip');svNextRound();}
+}
+
+function finishPromoTask(taskTimes){
+  promoState.running=false;window._promoMode=false;
+  const{rank,rankIdx}=getCurrentRank();
+  const task=rank.promo[promoState.taskIdx];
+  const passed=task.check(taskTimes,age);
+  const valid=taskTimes.filter(t=>!t.tooEarly).map(t=>t.ms);
+  const avg=valid.length?Math.round(valid.reduce((a,b)=>a+b,0)/valid.length):0;
+  promoState.results[promoState.taskIdx]={passed,detail:avg?`avg ${avg}ms`:''};
+  if(!passed){
+    promoState.taskIdx=0;promoState.results=[];
+    renderPromoTasks();
+    document.getElementById('promo-result-wrap').style.display='block';
+    document.getElementById('promo-result-msg').innerHTML=`<span style="color:var(--accent2)">✗ Promotion Failed</span>`;
+    document.getElementById('promo-result-sub').textContent='You must pass all 3 tasks in one attempt. Keep earning XP and try again.';
+    document.getElementById('promo-start-btn').textContent='↺ Try Again';
+    showToast('❌ Task failed — promotion attempt reset','error');
+    showScreen('screen-promo');return;
+  }
+  promoState.taskIdx++;
+  if(promoState.taskIdx>=rank.promo.length){
+    const d=loadXP();d.rankIdx=(d.rankIdx||0)+1;saveXP(d);
+    renderPromoTasks();showScreen('screen-promo');
+    setTimeout(()=>showRankUpCelebration(RANKS[d.rankIdx]),400);return;
+  }
+  renderPromoTasks();
+  const next=rank.promo[promoState.taskIdx];
+  document.getElementById('promo-start-btn').textContent=`▶ Start Task ${promoState.taskIdx+1}: ${next.name}`;
+  showToast(`✅ Task ${promoState.taskIdx} passed! Next: ${next.name}`,'success');
+  showScreen('screen-promo');
+}
+
+function showRankUpCelebration(newRank){
+  document.getElementById('rankup-icon').textContent=newRank.emoji;
+  document.getElementById('rankup-new-rank').innerHTML=`<span style="color:${newRank.col}">${newRank.name}</span>`;
+  document.getElementById('rankup-sub').textContent=newRank.tier.toUpperCase();
+  document.getElementById('rankup-overlay').classList.add('active');
+  fireConfetti();setTimeout(fireConfetti,400);sndRecord();
+}
+function dismissRankUp(){document.getElementById('rankup-overlay').classList.remove('active');showScreen('screen-profile');}
+
+// Hook XP into saveSession
+const _xpSave=saveSession;
+saveSession=function(mode,avgMs,score,rounds){
+  _xpSave(mode,avgMs,score,rounds);
+  if(window._dcMode||window._promoMode)return;
+  const earned=awardXP(mode,avgMs,score,rounds);
+  setTimeout(()=>showToast(`+${earned} XP`,'' ),1500);
+};
+
+// Hook promo intercept into showResults
+const _promoShowResults=showResults;
+showResults=function(modeName){
+  if(window._promoMode){finishPromoTask([...times]);return;}
+  _promoShowResults.call(this,modeName);
+};
+
+// Hook promo into svEndGame — handled inside svEndGame via _promoMode check
+
+// Hook promo into renderProfile — inject rank card at top
+const _rpOrig=renderProfile;
+renderProfile=function(){
+  _rpOrig();
+  const p=loadProfile();if(!p)return;
+  const{rank,rankIdx}=getCurrentRank();
+  const xpIn=getXPInCurrentRank(),xpTo=getXPToNextRank();
+  const canPromo=canAttemptPromo();
+  const el=document.getElementById('profile-content');
+  const pct=xpTo?Math.min(100,Math.round(xpIn/xpTo*100)):100;
+  const nextRank=RANKS[rankIdx+1];
+  const rankHtml=`
+    <div class="rank-showcase" style="background:${rank.bg};border:1px solid ${rank.col}40;">
+      <span class="rank-emblem">${rank.emoji}</span>
+      <div class="rank-name-big" style="color:${rank.col}">${rank.name}</div>
+      <div class="rank-tier-label" style="color:${rank.col}">${rank.tier}</div>
+    </div>
+    ${nextRank?`
+    <div class="xp-bar-wrap">
+      <div class="xp-bar-header">
+        <span class="xp-rank-label" style="color:${rank.col}">${rank.name}</span>
+        <span class="xp-next-label">${xpTo?xpIn+' / '+xpTo+' XP':'MAX'}</span>
+      </div>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill-bar" style="width:0%;background:linear-gradient(90deg,${rank.col}88,${rank.col})"></div></div>
+      <div class="xp-sub"><span>${xpIn} XP earned this rank</span><span>${xpTo?xpTo-xpIn+' XP to promo':''}</span></div>
+    </div>
+    ${canPromo
+      ?`<button class="btn btn-primary" style="background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 0 20px rgba(245,158,11,0.3);margin-bottom:22px;" onclick="showPromoScreen()">🏆 Attempt Promotion → ${nextRank.name}</button>`
+      :`<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--muted);margin-bottom:22px;text-align:center;">Earn <strong style="color:var(--text)">${xpTo?xpTo-xpIn:0} more XP</strong> to unlock the promotion challenge → <strong style="color:${nextRank.col}">${nextRank.name}</strong></div>`}
+    `:`<div style="text-align:center;padding:12px;font-size:13px;color:var(--accent);margin-bottom:22px;letter-spacing:0.15em;">👑 MAXIMUM RANK ACHIEVED</div>`}
+  `;
+  el.insertAdjacentHTML('afterbegin',rankHtml);
+  setTimeout(()=>{const b=document.getElementById('xp-fill-bar');if(b)b.style.width=pct+'%';},100);
+};
+
+// Hook _promoMode into svEndGame
+const _svEndPromo=svEndGame;
+
+// ═══════════════════════ XP CHALLENGES ════════════════════════
+
+// Challenge pool — each has a minRank (0=Rookie, 1=Contender etc), XP reward, and check fn
+const XPC_POOL=[
+  // ── Rookie tier ──────────────────────────────────────────
+  {id:'r1',name:'Off the Blocks',icon:'⚡',minRank:0,xp:80,
+   desc:'Complete 5 QuickTap rounds with no early presses',
+   mode:'qt',rounds:5,check:(t)=>t.length>=5&&t.every(x=>!x.tooEarly)},
+  {id:'r2',name:'First Drive',icon:'🏎',minRank:0,xp:80,
+   desc:'Complete 5 BrakeTest rounds',
+   mode:'bt',rounds:5,check:(t)=>t.filter(x=>!x.tooEarly).length>=4},
+  {id:'r3',name:'Keep Steady',icon:'🎯',minRank:0,xp:100,
+   desc:'5 rounds, all within 60ms spread',
+   mode:'qt',rounds:5,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=4&&Math.max(...v)-Math.min(...v)<=60;}},
+  {id:'r4',name:'Survivor Debut',icon:'💀',minRank:0,xp:100,
+   desc:'Survive 5 rounds in Survival mode',
+   mode:'sv',rounds:8,check:(t)=>t.filter(x=>!x.tooEarly).length>=5},
+  {id:'r5',name:'Under Benchmark',icon:'⚡',minRank:0,xp:120,
+   desc:'Average under your age benchmark over 5 rounds',
+   mode:'qt',rounds:5,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=4&&v.reduce((a,b)=>a+b,0)/v.length<bench(a).mean;}},
+
+  // ── Contender tier ───────────────────────────────────────
+  {id:'c1',name:'Benchmark Minus 10',icon:'⚡',minRank:1,xp:150,
+   desc:'Average 10ms under your benchmark over 8 rounds',
+   mode:'qt',rounds:8,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=6&&v.reduce((a,b)=>a+b,0)/v.length<=bench(a).mean-10;}},
+  {id:'c2',name:'Clean Machine',icon:'✨',minRank:1,xp:140,
+   desc:'8 rounds, zero early presses',
+   mode:'qt',rounds:8,check:(t)=>t.length>=8&&t.every(x=>!x.tooEarly)},
+  {id:'c3',name:'Tight Window',icon:'🎯',minRank:1,xp:160,
+   desc:'8 rounds, all within 40ms of each other',
+   mode:'qt',rounds:8,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=6&&Math.max(...v)-Math.min(...v)<=40;}},
+  {id:'c4',name:'Road Warrior',icon:'🏎',minRank:1,xp:150,
+   desc:'8 BrakeTest rounds under your benchmark + 15ms',
+   mode:'bt',rounds:8,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=6&&v.reduce((a,b)=>a+b,0)/v.length<=bench(a).mean+15;}},
+  {id:'c5',name:'Endure',icon:'💀',minRank:1,xp:160,
+   desc:'Survive 10 rounds without losing a life',
+   mode:'sv',rounds:12,check:(t)=>t.filter(x=>!x.tooEarly&&!x.lifeLost).length>=10},
+
+  // ── Intermediate tier ────────────────────────────────────
+  {id:'i1',name:'Sharp Reflexes',icon:'⚡',minRank:2,xp:200,
+   desc:'Average 20ms under your benchmark over 8 rounds',
+   mode:'qt',rounds:8,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=6&&v.reduce((a,b)=>a+b,0)/v.length<=bench(a).mean-20;}},
+  {id:'i2',name:'Glass Nerves',icon:'🎯',minRank:2,xp:210,
+   desc:'10 rounds, all within 30ms of each other',
+   mode:'qt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=8&&Math.max(...v)-Math.min(...v)<=30;}},
+  {id:'i3',name:'Precision Brakes',icon:'🏎',minRank:2,xp:200,
+   desc:'8 BrakeTest rounds all under your benchmark',
+   mode:'bt',rounds:8,check:(t,a)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=6&&v.reduce((a,b)=>a+b,0)/v.length<bench(a).mean;}},
+  {id:'i4',name:'Battle Hardened',icon:'💀',minRank:2,xp:220,
+   desc:'Survive 15 rounds in Survival mode',
+   mode:'sv',rounds:18,check:(t)=>t.filter(x=>!x.tooEarly).length>=15},
+  {id:'i5',name:'Flawless 8',icon:'✨',minRank:2,xp:240,
+   desc:'8 rounds, no early presses, every time under benchmark +5ms',
+   mode:'qt',rounds:8,check:(t,a)=>{const bm=bench(a).mean;return t.every(x=>!x.tooEarly)&&t.every(x=>x.ms<bm+5);}},
+
+  // ── Semi-Pro tier ────────────────────────────────────────
+  {id:'s1',name:'Sub-280',icon:'⚡',minRank:3,xp:300,
+   desc:'Average under 280ms over 10 rounds regardless of age',
+   mode:'qt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=8&&v.reduce((a,b)=>a+b,0)/v.length<280;}},
+  {id:'s2',name:'Like Clockwork',icon:'🎯',minRank:3,xp:320,
+   desc:'10 rounds, all within 20ms of each other',
+   mode:'qt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=9&&Math.max(...v)-Math.min(...v)<=20;}},
+  {id:'s3',name:'Cold Blooded',icon:'🏎',minRank:3,xp:300,
+   desc:'10 BrakeTest rounds average under 270ms',
+   mode:'bt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=8&&v.reduce((a,b)=>a+b,0)/v.length<270;}},
+  {id:'s4',name:'Immortal',icon:'💀',minRank:3,xp:340,
+   desc:'Survive 25 rounds without losing a single life',
+   mode:'sv',rounds:28,check:(t)=>t.filter(x=>!x.tooEarly&&!x.lifeLost).length>=25},
+  {id:'s5',name:'40ms Club',icon:'⚡',minRank:3,xp:360,
+   desc:'Get at least one reaction under 40ms faster than your benchmark',
+   mode:'qt',rounds:10,check:(t,a)=>t.some(x=>!x.tooEarly&&x.ms<bench(a).mean-40)},
+
+  // ── Professional tier ────────────────────────────────────
+  {id:'p1',name:'Sub-260',icon:'⚡',minRank:4,xp:450,
+   desc:'Average under 260ms over 10 rounds',
+   mode:'qt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=8&&v.reduce((a,b)=>a+b,0)/v.length<260;}},
+  {id:'p2',name:'Surgeon',icon:'🎯',minRank:4,xp:480,
+   desc:'10 rounds, all within 15ms of each other',
+   mode:'qt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=9&&Math.max(...v)-Math.min(...v)<=15;}},
+  {id:'p3',name:'Formula Reflex',icon:'🏎',minRank:4,xp:450,
+   desc:'10 BrakeTest rounds average under 250ms',
+   mode:'bt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=8&&v.reduce((a,b)=>a+b,0)/v.length<250;}},
+  {id:'p4',name:'Unstoppable',icon:'💀',minRank:4,xp:500,
+   desc:'Survive 30 rounds losing maximum 1 life total',
+   mode:'sv',rounds:35,check:(t)=>{const lost=t.filter(x=>x.lifeLost).length;return t.filter(x=>!x.tooEarly).length>=30&&lost<=1;}},
+  {id:'p5',name:'Elite Speed',icon:'⚡',minRank:4,xp:550,
+   desc:'Average under 240ms over 10 rounds',
+   mode:'qt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=8&&v.reduce((a,b)=>a+b,0)/v.length<240;}},
+
+  // ── World Class tier ─────────────────────────────────────
+  {id:'w1',name:'Sub-220',icon:'👑',minRank:5,xp:700,
+   desc:'Average under 220ms over 10 rounds',
+   mode:'qt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=8&&v.reduce((a,b)=>a+b,0)/v.length<220;}},
+  {id:'w2',name:'Machine Precision',icon:'🎯',minRank:5,xp:750,
+   desc:'10 rounds, all within 10ms of each other',
+   mode:'qt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=9&&Math.max(...v)-Math.min(...v)<=10;}},
+  {id:'w3',name:'God Reflexes',icon:'⚡',minRank:5,xp:800,
+   desc:'At least one reaction under 180ms',
+   mode:'qt',rounds:10,check:(t)=>t.some(x=>!x.tooEarly&&x.ms<180)},
+  {id:'w4',name:'Legendary',icon:'🏎',minRank:5,xp:750,
+   desc:'10 BrakeTest rounds, every single one under 220ms',
+   mode:'bt',rounds:10,check:(t)=>{const v=t.filter(x=>!x.tooEarly).map(x=>x.ms);return v.length>=9&&Math.max(...v)<220;}},
+];
+
+// Weekly challenge set — 6 challenges seeded by week number
+function getWeekKey(){
+  const d=new Date(); const start=new Date(d.getFullYear(),0,1);
+  return Math.floor((d-start)/(7*24*60*60*1000));
+}
+
+function getWeeklyChallenges(){
+  const{rankIdx}=getCurrentRank();
+  // Get available pool for current rank (show current rank + 1 rank above for variety)
+  const available=XPC_POOL.filter(c=>c.minRank<=rankIdx+1);
+  // Seed by week + rank
+  const seed=(getWeekKey()*17+rankIdx*7+1)%available.length;
+  const picks=[];
+  for(let i=0;i<Math.min(6,available.length);i++){
+    picks.push(available[(seed+i*3)%available.length]);
+  }
+  // Remove duplicates
+  const seen=new Set();
+  return picks.filter(c=>{if(seen.has(c.id))return false;seen.add(c.id);return true;});
+}
+
+function loadXPCProgress(){
+  try{return JSON.parse(localStorage.getItem('tx_xpc'))||{};}catch(e){return{};}
+}
+function saveXPCProgress(d){try{localStorage.setItem('tx_xpc',JSON.stringify(d));}catch(e){}}
+
+function getXPCKey(id){ return `${getWeekKey()}_${id}`; }
+
+function renderChallenges(){
+  const{rank,rankIdx}=getCurrentRank();
+  const challenges=getWeeklyChallenges();
+  const progress=loadXPCProgress();
+
+  // Rank info banner
+  const rankInfo=document.getElementById('xpc-rank-info');
+  rankInfo.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:${rank.bg};border:1px solid ${rank.col}40;border-radius:10px;font-size:12px;"><span style="font-size:20px">${rank.emoji}</span><span style="color:${rank.col};font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.08em;">${rank.name}</span><span style="color:var(--muted);margin-left:4px;">— your active rank challenges</span></div>`;
+
+  const list=document.getElementById('xpc-list');
+  list.innerHTML='';
+
+  // Group by rank tier
+  const currentRankChallenges=challenges.filter(c=>c.minRank===rankIdx);
+  const upperChallenges=challenges.filter(c=>c.minRank>rankIdx);
+
+  if(currentRankChallenges.length){
+    const lbl=document.createElement('div');
+    lbl.className='xpc-section-title';
+    lbl.textContent=`${rank.name} challenges — this week`;
+    list.appendChild(lbl);
+    currentRankChallenges.forEach(c=>list.appendChild(buildXPCCard(c,progress,rankIdx,rank)));
+  }
+  if(upperChallenges.length){
+    const lbl=document.createElement('div');
+    lbl.className='xpc-section-title';
+    lbl.textContent='Bonus challenges — harder XP';
+    list.appendChild(lbl);
+    upperChallenges.forEach(c=>{
+      const nextRank=RANKS[c.minRank]||rank;
+      list.appendChild(buildXPCCard(c,progress,rankIdx,nextRank));
+    });
+  }
+}
+
+function buildXPCCard(c, progress, rankIdx, rankForColor){
+  const key=getXPCKey(c.id);
+  const done=progress[key];
+  const locked=c.minRank>rankIdx+1; // lock challenges 2+ ranks above
+
+  const card=document.createElement('div');
+  card.className='xpc-card '+(done?'completed':locked?'locked':'available');
+
+  const statusIcon=done?'✅':locked?'🔒':'▶';
+  const rankTag=RANKS[c.minRank];
+
+  card.innerHTML=`
+    <div class="xpc-row">
+      <div class="xpc-icon">${c.icon}</div>
+      <div class="xpc-info">
+        <div class="xpc-name">${c.name}</div>
+        <div class="xpc-desc">${c.desc}</div>
+        <span class="xpc-rank-tag" style="color:${rankForColor.col};border-color:${rankForColor.col}50;background:${rankForColor.col}10;">${rankTag?.name||'?'} Tier</span>
+      </div>
+      <div class="xpc-right">
+        <div class="xpc-xp">+${c.xp} XP</div>
+        <div class="xpc-status">${statusIcon}</div>
+      </div>
+    </div>`;
+
+  if(!done&&!locked){
+    card.onclick=()=>startXPChallenge(c);
+  }
+  return card;
+}
+
+let _xpcActive=null;
+
+function startXPChallenge(c){
+  _xpcActive=c;
+  window._xpcMode=true;
+
+  if(c.mode==='qt'){
+    currentMode='qt';totalRounds=c.rounds;times=[];currentRound=0;
+    showScreen('screen-qt-game');
+    document.getElementById('qt-htp').style.display='none';
+    buildStrip('qt-strip');qtNext();
+  } else if(c.mode==='bt'){
+    currentMode='bt';totalRounds=c.rounds;times=[];currentRound=0;roadScroll=0;
+    showScreen('screen-bt-game');
+    document.getElementById('bt-htp').style.display='none';
+    buildStrip('bt-strip');btRound();
+  } else if(c.mode==='sv'){
+    currentMode='sv';svSub='qt';svMaxLives=3;svLives=3;svRound=0;svScore=0;
+    svTimes=[];svRefAvg=null;
+    showScreen('screen-sv-game');
+    document.getElementById('sv-qt-zone').style.display='';
+    document.getElementById('sv-bt-scene').style.display='none';
+    buildStrip('sv-strip');svNextRound();
+  }
+}
+
+function finishXPChallenge(taskTimes){
+  window._xpcMode=false;
+  if(!_xpcActive)return;
+  const c=_xpcActive;_xpcActive=null;
+  const passed=c.check(taskTimes,age);
+  if(passed){
+    const prog=loadXPCProgress();
+    const key=getXPCKey(c.id);
+    if(!prog[key]){
+      prog[key]=true;saveXPCProgress(prog);
+      // Award XP
+      const d=loadXP();d.xp=(d.xp||0)+c.xp;saveXP(d);
+      setTimeout(()=>{
+        showToast(`✅ Challenge complete! +${c.xp} XP`,'success');
+        fireConfetti();
+        sndRecord();
+      },300);
+    } else {
+      showToast('Already completed this week!','');
+    }
+  } else {
+    showToast(`❌ Challenge failed — try again`,'error');
+    sndTooEarly();
+  }
+  currentMode='qt';
+  showScreen('screen-challenges');
+  renderChallenges();
+}
+
+// Hook xpc intercept into showResults
+const _xpcShowResults=showResults;
+showResults=function(modeName){
+  if(window._xpcMode){finishXPChallenge([...times]);return;}
+  _xpcShowResults.call(this,modeName);
+};
+
+// Hook xpc into svEndGame — add check at top of existing svEndGame
 </script>
 </body>
 </html>
