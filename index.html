@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TimeX — Reaction Time Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TIME X">
+<meta property="og:title" content="TIME X — Reaction Time Game">
+<meta property="og:description" content="Test your reaction time. Compare against your age group. Can you go elite?">
+<meta property="og:type" content="website">
+<title>TIME X — Reaction Time Game</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--border:#2a2a3e;--accent:#00ff88;--accent2:#ff3c6e;--accent3:#ffcb47;--text:#e8e8f0;--muted:#6b6b8a;--glow:0 0 20px rgba(0,255,136,0.4);--glow-red:0 0 20px rgba(255,60,110,0.4);}
@@ -235,8 +242,104 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .firstrun-title{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px;}
 .firstrun-sub{font-size:12px;color:var(--muted);letter-spacing:0.12em;line-height:1.7;margin-bottom:26px;}
 .firstrun-fields{display:flex;flex-direction:column;gap:14px;margin-bottom:22px;text-align:left;}
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .container{padding:20px 16px;}
+  .mode-grid3{grid-template-columns:1fr!important;}
+  .stats-grid{grid-template-columns:1fr 1fr!important;}
+  .btn-row3{grid-template-columns:1fr 1fr!important;}
+  .trend-row{grid-template-columns:1fr!important;}
+  .setup-grid{grid-template-columns:1fr!important;}
+  .sv-sub-grid{grid-template-columns:1fr!important;}
+  .car-grid{grid-template-columns:1fr 1fr!important;}
+  .profile-stats-grid{grid-template-columns:1fr 1fr!important;}
+  .big-time{font-size:clamp(50px,20vw,90px)!important;}
+  .header{margin-bottom:28px;}
+  .reaction-zone{aspect-ratio:16/9;}
+  .times-strip{gap:5px;}
+  .time-chip{padding:5px 10px;font-size:11px;}
+  .t-badge{display:none;}
+}
+/* ── ANIMATED BACKGROUND ── */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+/* ── MODE CARD HOVER ANIMATIONS ── */
+.mode-card{transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);}
+.mode-card:hover{transform:translateY(-6px) scale(1.02);}
+.mode-card:active{transform:translateY(-1px) scale(0.99);}
+.mode-icon{transition:transform 0.3s ease;}
+.mode-card:hover .mode-icon{transform:scale(1.25) rotate(-5deg);}
+/* ── RESULTS REVEAL ── */
+@keyframes countUp{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes recordPulse{0%,100%{box-shadow:0 0 20px rgba(255,203,71,0.4)}50%{box-shadow:0 0 60px rgba(255,203,71,0.9),0 0 100px rgba(255,203,71,0.3)}}
+.results-reveal .big-time{animation:countUp 0.5s cubic-bezier(0.34,1.56,0.64,1) both;}
+.results-reveal .stats-grid{animation:slideUp 0.4s 0.15s ease both;}
+.results-reveal .score-section{animation:slideUp 0.4s 0.3s ease both;}
+.results-reveal .trend-row{animation:slideUp 0.4s 0.45s ease both;}
+.results-reveal .times-list{animation:slideUp 0.4s 0.6s ease both;}
+.new-record-badge.flash{animation:recordPulse 0.5s 0.4s 4,fadeIn 0.3s both;}
+/* ── HOW TO PLAY ── */
+.how-to-play{background:linear-gradient(135deg,rgba(0,255,136,0.07),rgba(0,255,136,0.02));border:1px solid rgba(0,255,136,0.18);border-radius:12px;padding:13px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;animation:slideUp 0.3s ease;}
+.htp-icon{font-size:18px;flex-shrink:0;}
+.htp-text{font-size:12px;color:var(--muted);line-height:1.5;}
+.htp-text strong{color:var(--accent);}
+/* ── LEADERBOARD ── */
+.lb-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.lb-tab{flex:1;min-width:80px;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);transition:all 0.2s;text-align:center;}
+.lb-tab.active{background:rgba(0,255,136,0.08);border-color:var(--accent);color:var(--accent);}
+.lb-list{display:flex;flex-direction:column;gap:7px;margin-bottom:22px;}
+.lb-row{display:flex;align-items:center;gap:12px;padding:12px 15px;background:var(--surface);border:1px solid var(--border);border-radius:10px;}
+.lb-row.gold{border-color:rgba(255,203,71,0.5);background:rgba(255,203,71,0.04);}
+.lb-row.silver{border-color:rgba(192,192,192,0.35);}
+.lb-row.bronze{border-color:rgba(205,127,50,0.35);}
+.lb-rank{font-family:'Bebas Neue',sans-serif;font-size:22px;width:30px;flex-shrink:0;text-align:center;color:var(--muted);}
+.lb-row.gold .lb-rank{color:#ffcb47;}
+.lb-row.silver .lb-rank{color:#c0c0c0;}
+.lb-row.bronze .lb-rank{color:#cd7f32;}
+.lb-name{flex:1;font-size:13px;color:var(--text);}
+.lb-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);}
+.lb-date{font-size:10px;color:var(--muted);margin-left:4px;}
+.lb-empty{text-align:center;padding:28px;color:var(--muted);font-size:13px;}
+/* ── SESSION HISTORY ── */
+.history-list{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;}
+.history-row{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:12px;transition:border-color 0.2s;}
+.history-row:hover{border-color:rgba(0,255,136,0.25);}
+.hr-mode{font-size:16px;flex-shrink:0;}
+.hr-info{flex:1;}
+.hr-title{font-size:12px;color:var(--text);}
+.hr-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.hr-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);flex-shrink:0;}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 20px;font-size:13px;color:var(--text);z-index:500;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{border-color:var(--accent);color:var(--accent);}
+.toast.error{border-color:var(--accent2);color:var(--accent2);}
+/* ── CONFETTI ── */
+.confetti-p{position:fixed;pointer-events:none;z-index:999;border-radius:2px;animation:cFall 1.6s ease-in forwards;}
+@keyframes cFall{0%{opacity:1;transform:translateY(-10px) rotate(0)}100%{opacity:0;transform:translateY(100vh) rotate(540deg)}}
+/* ── STREAK ── */
+.streak-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 16px;background:rgba(255,203,71,0.07);border:1px solid rgba(255,203,71,0.2);border-radius:10px;margin-bottom:16px;font-size:12px;color:var(--accent3);}
+.streak-bar.hidden{display:none;}
+/* ── SCORE CARD OVERLAY ── */
+.sc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:300;align-items:center;justify-content:center;padding:20px;flex-direction:column;gap:14px;}
+.sc-overlay.active{display:flex;}
+.sc-canvas-wrap{border-radius:16px;overflow:hidden;box-shadow:0 0 40px rgba(0,255,136,0.2);}
+.sc-btns{display:flex;gap:10px;}
+/* scrollbar */
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+*{-webkit-tap-highlight-color:transparent;}
 </style>
+</head>
 <body>
+<canvas id="bg-canvas"></canvas>
+<div id="toast" class="toast"></div>
+<div class="sc-overlay" id="sc-overlay">
+  <div class="sc-canvas-wrap"><canvas id="sc-canvas" width="400" height="500"></canvas></div>
+  <div class="sc-btns">
+    <button class="btn btn-secondary" style="width:auto;" onclick="document.getElementById('sc-overlay').classList.remove('active')">✕ Close</button>
+    <button class="btn btn-primary" style="width:auto;padding:14px 24px;" onclick="downloadScoreCard()">↓ Save Image</button>
+  </div>
+</div>
 <div class="container">
   <div class="header" style="position:relative;">
     <div class="logo">TIME<span style="color:var(--text);opacity:0.55"> </span>X</div>
@@ -268,6 +371,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <!-- MODE SELECT -->
   <div class="screen active" id="screen-mode">
+    <div class="streak-bar hidden" id="streak-bar">🔥 <span id="streak-text">3 day streak</span> — keep it going!</div>
     <div class="mode-grid3">
       <div class="mode-card qt" onclick="selectMode('qt')">
         <div class="mode-icon">⚡</div>
@@ -287,6 +391,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
         <div class="mode-desc">Keep up with your rolling average. Fall 30ms behind and lose a life.</div>
         <div class="mode-tag">Endurance Mode</div>
       </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;">
+      <button class="btn btn-secondary" onclick="showScreen('screen-leaderboard')">🏆 Leaderboard</button>
+      <button class="btn btn-secondary" onclick="showScreen('screen-history')">📋 History</button>
     </div>
   </div>
 
@@ -315,6 +423,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="exit-bar">
       <button class="btn-pause" onclick="togglePause()">⏸ Pause</button>
       <button class="btn-exit" onclick="goHome()">✕ Exit</button>
+    </div>
+    <div id="qt-htp" class="how-to-play">
+      <div class="htp-icon">💡</div>
+      <div class="htp-text">Wait for the zone to flash <strong>red</strong>, then click or press <strong>Space</strong> as fast as you can. Clicking early costs a round.</div>
     </div>
     <div class="progress-row">
       <div class="progress-label" id="qt-prog-lbl">Round 1/5</div>
@@ -373,6 +485,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <button class="btn-pause" onclick="togglePause()">⏸ Pause</button>
       <button class="btn-exit" onclick="goHome()">✕ Exit</button>
     </div>
+    <div id="bt-htp" class="how-to-play">
+      <div class="htp-icon">🏎</div>
+      <div class="htp-text">Watch the traffic lights ahead. The moment they turn <strong>red</strong> — click or press <strong>Space</strong> to brake. Don't click before they change!</div>
+    </div>
     <div class="progress-row">
       <div class="progress-label" id="bt-prog-lbl">Round 1/5</div>
       <div class="progress-track"><div class="progress-fill" id="bt-prog-fill" style="width:0%"></div></div>
@@ -423,9 +539,31 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="divider"></div>
     <div class="btn-row3">
       <button class="btn btn-secondary" onclick="goHome()">← Modes</button>
-      <button class="btn btn-share" id="share-btn" onclick="doShare()">⎘ Share</button>
+      <button class="btn btn-share" id="share-btn" onclick="showScoreCard()">📸 Score Card</button>
       <button class="btn btn-primary" onclick="playAgain()">▶ Again</button>
     </div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div class="screen" id="screen-leaderboard">
+    <button class="btn btn-back" onclick="showScreen('screen-mode')">← Back</button>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:0.1em;color:var(--accent3);margin-bottom:6px;">🏆 Leaderboard</div>
+    <div style="font-size:11px;color:var(--muted);letter-spacing:0.15em;margin-bottom:20px;">Top 10 scores on this device</div>
+    <div class="lb-tabs">
+      <div class="lb-tab active" onclick="switchLbTab('qt',this)">⚡ QuickTap</div>
+      <div class="lb-tab" onclick="switchLbTab('bt',this)">🏎 BrakeTest</div>
+      <div class="lb-tab" onclick="switchLbTab('sv',this)">💀 Survival</div>
+    </div>
+    <div class="lb-list" id="lb-list"></div>
+  </div>
+
+  <!-- SESSION HISTORY -->
+  <div class="screen" id="screen-history">
+    <button class="btn btn-back" onclick="showScreen('screen-mode')">← Back</button>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:0.1em;color:var(--accent);margin-bottom:6px;">📋 Session History</div>
+    <div style="font-size:11px;color:var(--muted);letter-spacing:0.15em;margin-bottom:20px;">Your last 20 games</div>
+    <div class="history-list" id="history-list"></div>
+    <button class="btn" style="width:100%;background:rgba(255,60,110,0.07);color:var(--accent2);border:1px solid rgba(255,60,110,0.2);border-radius:10px;padding:13px;" onclick="clearHistory()">🗑 Clear History</button>
   </div>
 
   <!-- SURVIVAL SETUP -->
@@ -510,7 +648,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="divider"></div>
     <div class="btn-row3">
       <button class="btn btn-secondary" onclick="goHome()">← Modes</button>
-      <button class="btn btn-share" id="sv-share-btn" onclick="svShare()">⎘ Share</button>
+      <button class="btn btn-share" id="sv-share-btn" onclick="showScoreCard()">📸 Score Card</button>
       <button class="btn btn-primary" onclick="svPlayAgain()">▶ Again</button>
     </div>
   </div>
@@ -536,6 +674,9 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if(id==='screen-profile') renderProfile();
+  if(id==='screen-leaderboard'){renderLeaderboard('qt');document.querySelectorAll('.lb-tab').forEach((t,i)=>{t.classList.toggle('active',i===0);});}
+  if(id==='screen-history') renderHistory();
+  if(id==='screen-mode') updateStreak();
 }
 function goHome(){
   clearWT(); btStop(); svStop(); gamePhase='idle';
@@ -654,12 +795,12 @@ function updateProfileStats(mode, roundsPlayed, avgMs, score){
 function getRank(bestMs, a){
   if(!bestMs) return {label:'Unranked',emoji:'—',col:'var(--muted)'};
   const b=bench(a);const z=(bestMs-b.mean)/b.sd;
-  if(z<-2.0) return {label:'Superhuman',emoji:'⚡',col:'#b8ffda'};
-  if(z<-1.5) return {label:'Elite',emoji:'🔥',col:'var(--accent)'};
-  if(z<-1.0) return {label:'Pro',emoji:'✨',col:'#6ee7ff'};
-  if(z<-0.3) return {label:'Sharp',emoji:'👍',col:'#6ee7ff'};
-  if(z< 0.3) return {label:'Average',emoji:'😐',col:'var(--accent3)'};
-  if(z< 1.0) return {label:'Slow',emoji:'🐢',col:'#ff9a5c'};
+  if(z<-2.05) return {label:'Superhuman',emoji:'⚡',col:'#b8ffda'};
+  if(z<-1.55) return {label:'Elite',emoji:'🔥',col:'var(--accent)'};
+  if(z<-1.05) return {label:'Pro',emoji:'✨',col:'#6ee7ff'};
+  if(z<-0.32) return {label:'Sharp',emoji:'👍',col:'#6ee7ff'};
+  if(z< 0.32) return {label:'Average',emoji:'😐',col:'var(--accent3)'};
+  if(z< 1.05) return {label:'Slow',emoji:'🐢',col:'#ff9a5c'};
   return {label:'Beginner',emoji:'🦥',col:'var(--accent2)'};
 }
 
@@ -741,13 +882,13 @@ function normCDF(x,m,s){return 0.5*(1+erf((x-m)/(s*Math.sqrt(2))));}
 function calcScore(ms,a){const b=bench(a);const f=1-normCDF(ms,b.mean,b.sd);return{score:Math.round(Math.max(0,Math.min(100,f*100))),pct:Math.round(f*100),bavg:b.mean};}
 function ageRating(ms,a){
   const b=bench(a);const z=(ms-b.mean)/b.sd;
-  if(z<-2.0)return{label:'Superhuman',cls:'badge-superhuman',emoji:'⚡'};
-  if(z<-1.5)return{label:'Elite',cls:'badge-elite',emoji:'🔥'};
-  if(z<-1.0)return{label:'Great',cls:'badge-great',emoji:'✨'};
-  if(z<-0.3)return{label:'Above Avg',cls:'badge-great',emoji:'👍'};
-  if(z< 0.3)return{label:'Average',cls:'badge-average',emoji:'😐'};
-  if(z< 1.0)return{label:'Below Avg',cls:'badge-slow',emoji:'👎'};
-  if(z< 1.5)return{label:'Slow',cls:'badge-slow',emoji:'🐢'};
+  if(z<-2.05)return{label:'Superhuman',cls:'badge-superhuman',emoji:'⚡'};
+  if(z<-1.55)return{label:'Elite',cls:'badge-elite',emoji:'🔥'};
+  if(z<-1.05)return{label:'Great',cls:'badge-great',emoji:'✨'};
+  if(z<-0.32)return{label:'Above Avg',cls:'badge-great',emoji:'👍'};
+  if(z< 0.32)return{label:'Average',cls:'badge-average',emoji:'😐'};
+  if(z< 1.05)return{label:'Below Avg',cls:'badge-slow',emoji:'👎'};
+  if(z< 1.55)return{label:'Slow',cls:'badge-slow',emoji:'🐢'};
   return{label:'Very Slow',cls:'badge-veryslow',emoji:'🦥'};
 }
 function calcCons(arr){
@@ -869,7 +1010,21 @@ function showResults(modeName){
   const lines=times.map((t,i)=>t.tooEarly?`#${i+1}: Too Early`:`#${i+1}: ${t.ms}ms — ${ageRating(t.ms,age).label}`);
   lastShareText=`TimeX ${modeName}\nAge: ${age} | Rounds: ${totalRounds}\nAvg: ${avg}ms | Score: ${score}/100\n\n${lines.join('\n')}`;
   updateProfileStats(currentMode, valid.length, avg, null);
+  // Save session history
+  saveSession(currentMode, avg, score, valid.length);
+  // Save to leaderboard
+  const pName=(loadProfile()||{}).name||'Anonymous';
+  saveToLeaderboard(currentMode, pName, avg, true);
+  // Set score card data
+  const ratingForCard=ageRating(avg,age);
+  setScoreCardData(modeName,avg,best,score,valid.length,ratingForCard.emoji+' '+ratingForCard.label);
+  // Streak
+  updateStreak();
   showScreen('screen-results');
+  // Animate after DOM update
+  setTimeout(()=>animateResults(isRec),50);
+  // Hide HTP hints after first round
+  hideHtp('qt-htp'); hideHtp('bt-htp');
 }
 function doShare(){
   const btn=document.getElementById('share-btn');
@@ -932,15 +1087,30 @@ function qtClick(){
 
 // ═══════════════════════ BRAKETEST ════════════════════════
 const CARS={
-  lamborghini:{dash:'#1a1408',trim:'#f5c518',trim2:'#b08a10',hub:'#1a1408',cent:'#f5c518',name:'Lamborghini Huracán'},
-  ferrari:    {dash:'#1a0404',trim:'#e8131a',trim2:'#9a0d11',hub:'#1a0404',cent:'#e8131a',name:'Ferrari F8 Tributo'},
-  mercedes:   {dash:'#141414',trim:'#c8c8c8',trim2:'#888888',hub:'#141414',cent:'#c8c8c8',name:'Mercedes-AMG GT'}
+  lamborghini:{
+    dash:'#0e0c08', dashTop:'#1a1510', trim:'#f5c518', trim2:'#c8a010', trim3:'#7a6008',
+    alcantara:'#1a1510', carbon:'#111',
+    hub:'#0e0c08', cent:'#f5c518', name:'Lamborghini Huracán',
+    pillars:'#0e0c08', sky:'#05050f'
+  },
+  ferrari:{
+    dash:'#0f0303', dashTop:'#1a0505', trim:'#cc0000', trim2:'#880000', trim3:'#440000',
+    alcantara:'#1a0505', carbon:'#0a0a0a',
+    hub:'#0f0303', cent:'#cc0000', name:'Ferrari F8 Tributo',
+    pillars:'#0f0303', sky:'#040408'
+  },
+  mercedes:{
+    dash:'#0a0a0a', dashTop:'#141414', trim:'#c8c8c8', trim2:'#888', trim3:'#444',
+    alcantara:'#111', carbon:'#0d0d0d',
+    hub:'#0a0a0a', cent:'#c8c8c8', name:'Mercedes-AMG GT',
+    pillars:'#0a0a0a', sky:'#04040a'
+  }
 };
 
 // Road scroll state
 let btAnim=null, btSt='idle', btRedTime=0, btBrake=0, btResult=null, btLastTs=0, btRedOn=false;
-let roadScroll=0;   // 0–1 cycles, drives the lane-mark animation
-let brakeFlash=0;   // for red screen flash on "BRAKE NOW"
+let roadScroll=0;
+let brakeFlash=0;
 
 function selectCar(c){selectedCar=c;document.querySelectorAll('.car-card').forEach(el=>el.classList.toggle('selected',el.dataset.car===c));}
 function btStop(){if(btAnim){cancelAnimationFrame(btAnim);btAnim=null;}}
@@ -1025,11 +1195,9 @@ function drawScene(){
   const ctx=cv.getContext('2d');
   const W=cv.width, H=cv.height;
   const th=CARS[selectedCar];
-
-  const bEase=0; // braking animation removed — instant response
   ctx.clearRect(0,0,W,H);
 
-  // ── windshield area ──────────────────────────────────────────────────────
+  // ── windshield clip ─────────────────────────────────────────────────────
   const wT=36, wB=Math.round(H*0.52), wL=W*0.11, wR=W*0.89;
   ctx.save();
   ctx.beginPath();
@@ -1039,180 +1207,80 @@ function drawScene(){
 
   // sky
   const sky=ctx.createLinearGradient(0,0,0,wB);
-  sky.addColorStop(0,'#04040d'); sky.addColorStop(0.65,'#0b0b1e'); sky.addColorStop(1,'#101025');
+  sky.addColorStop(0,th.sky||'#04040d'); sky.addColorStop(0.65,'#0b0b1e'); sky.addColorStop(1,'#101025');
   ctx.fillStyle=sky; ctx.fillRect(0,0,W,wB);
 
-  // distant horizon glow
+  // horizon glow
   const hg=ctx.createRadialGradient(W/2,wB,0,W/2,wB,W*0.7);
-  hg.addColorStop(0,'rgba(255,120,60,0.08)'); hg.addColorStop(1,'rgba(0,0,0,0)');
+  hg.addColorStop(0,'rgba(255,120,60,0.06)'); hg.addColorStop(1,'rgba(0,0,0,0)');
   ctx.fillStyle=hg; ctx.fillRect(0,0,W,wB);
 
-  // road surface — fills bottom half of windshield
-  const vX=W/2, vY=wT+(wB-wT)*0.38;   // vanishing point sits 38% down windshield
+  // road
+  const vX=W/2, vY=wT+(wB-wT)*0.38;
   const rg=ctx.createLinearGradient(0,vY,0,wB);
   rg.addColorStop(0,'#101010'); rg.addColorStop(1,'#1e1e1e');
   ctx.beginPath(); ctx.moveTo(vX,vY); ctx.lineTo(W*0.01,wB); ctx.lineTo(W*0.99,wB); ctx.closePath();
   ctx.fillStyle=rg; ctx.fill();
-
-  // road edge lines
-  ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=2;
+  ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=2;
   ctx.beginPath(); ctx.moveTo(vX,vY); ctx.lineTo(W*0.01,wB); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(vX,vY); ctx.lineTo(W*0.99,wB); ctx.stroke();
 
-  // ── scrolling lane dashes ────────────────────────────────────────────────
-  // We draw 6 "depth slices". Each dash travels from near-vanishing to bottom.
-  // roadScroll offsets which slice within each segment is visible.
+  // scrolling lane marks
   const NMARKS=7;
   for(let i=0;i<NMARKS;i++){
-    // t = 0 (vanishing) → 1 (bottom of windshield)
-    // offset by roadScroll so marks appear to move toward viewer
-    const raw=((i+roadScroll)/NMARKS);
-    const t=raw%1;           // always 0–1
-    const tNext=((i+roadScroll+0.5)/NMARKS)%1;  // leading edge of dash
-
-    if(tNext<=t) continue;   // skip wrap artefact
-
-    const y1=vY+(wB-vY)*t;
-    const y2=vY+(wB-vY)*tNext;
-    const hw1=W*0.42*t, hw2=W*0.42*tNext;
-    const alpha=0.1+t*0.4;
-    const lw=Math.max(1,t*3);
-
-    // left dash
-    ctx.strokeStyle=`rgba(255,255,255,${alpha})`;
-    ctx.lineWidth=lw;
+    const raw=((i+roadScroll)/NMARKS); const t=raw%1;
+    const tN=((i+roadScroll+0.5)/NMARKS)%1;
+    if(tN<=t) continue;
+    const y1=vY+(wB-vY)*t, y2=vY+(wB-vY)*tN;
+    const hw1=W*0.42*t, hw2=W*0.42*tN;
+    ctx.strokeStyle=`rgba(255,255,255,${0.1+t*0.4})`; ctx.lineWidth=Math.max(1,t*3);
     ctx.beginPath(); ctx.moveTo(vX-hw1*0.06,y1); ctx.lineTo(vX-hw2*0.06,y2); ctx.stroke();
-    // right dash
     ctx.beginPath(); ctx.moveTo(vX+hw1*0.06,y1); ctx.lineTo(vX+hw2*0.06,y2); ctx.stroke();
   }
 
-  // ── traffic light — static, always fully visible ──────────────────────
-  // Mounted top-centre of windshield view, roughly at vanishing-point height
-  const tlX=W/2;
-  const poleTopY=wT+6;          // pole comes from top of windshield
-  const poleBotY=vY-4;          // pole bottom just above road horizon
-  const poleW=8;
-  const boxW=58, boxH=148;      // large, always readable
-  const boxX=tlX-boxW/2, boxY=poleTopY;
-
-  // pole
-  ctx.fillStyle='#303030';
-  ctx.fillRect(tlX-poleW/2, poleTopY, poleW, poleBotY-poleTopY);
-  // pole highlight
-  ctx.fillStyle='rgba(255,255,255,0.06)';
-  ctx.fillRect(tlX-poleW/2+1, poleTopY, 2, poleBotY-poleTopY);
-
-  // housing
-  const redOn  = btRedOn||btSt==='braking'||btSt==='done';
-  const greenOn= !btRedOn&&btSt!=='early';
-
+  // traffic light
+  const tlX=W/2, poleTopY=wT+6, poleBotY=vY-4, poleW=8;
+  const boxW=58, boxH=148, boxX=tlX-boxW/2, boxY=poleTopY;
+  const redOn=btRedOn||btSt==='done', greenOn=!btRedOn&&btSt!=='early';
+  ctx.fillStyle='#303030'; ctx.fillRect(tlX-poleW/2,poleTopY,poleW,poleBotY-poleTopY);
+  ctx.fillStyle='rgba(255,255,255,0.05)'; ctx.fillRect(tlX-poleW/2+1,poleTopY,2,poleBotY-poleTopY);
   if(redOn){ctx.shadowColor='rgba(255,40,40,0.7)';ctx.shadowBlur=28;}
-  ctx.fillStyle='#1c1c1c';
-  ctx.beginPath(); ctx.roundRect(boxX,boxY,boxW,boxH,7); ctx.fill();
-  ctx.shadowBlur=0;
-  ctx.strokeStyle='#3a3a3a'; ctx.lineWidth=1.5; ctx.stroke();
-
-  const lR=17;
-  const slot=boxH/3;
-  [
-    {cy:boxY+slot*0.5, on:redOn,    onC:'#ff2020', offC:'#280000'},
-    {cy:boxY+slot*1.5, on:false,    onC:'#ffcc00', offC:'#242000'},
-    {cy:boxY+slot*2.5, on:greenOn,  onC:'#00ee44', offC:'#00280e'},
-  ].forEach(l=>{
-    // glow
-    if(l.on){ctx.shadowColor=l.onC; ctx.shadowBlur=22;}
-    ctx.beginPath(); ctx.arc(tlX,l.cy,lR,0,Math.PI*2);
-    ctx.fillStyle=l.on?l.onC:l.offC; ctx.fill();
+  ctx.fillStyle='#1c1c1c'; ctx.beginPath(); ctx.roundRect(boxX,boxY,boxW,boxH,7); ctx.fill();
+  ctx.shadowBlur=0; ctx.strokeStyle='#3a3a3a'; ctx.lineWidth=1.5; ctx.stroke();
+  const lR=17, slot=boxH/3;
+  [{cy:boxY+slot*0.5,on:redOn,onC:'#ff2020',offC:'#280000'},
+   {cy:boxY+slot*1.5,on:false,onC:'#ffcc00',offC:'#242000'},
+   {cy:boxY+slot*2.5,on:greenOn,onC:'#00ee44',offC:'#00280e'}].forEach(l=>{
+    if(l.on){ctx.shadowColor=l.onC;ctx.shadowBlur=22;}
+    ctx.beginPath(); ctx.arc(tlX,l.cy,lR,0,Math.PI*2); ctx.fillStyle=l.on?l.onC:l.offC; ctx.fill();
     ctx.shadowBlur=0;
-    // bezel ring
-    ctx.beginPath(); ctx.arc(tlX,l.cy,lR,0,Math.PI*2);
-    ctx.strokeStyle='rgba(0,0,0,0.5)'; ctx.lineWidth=2; ctx.stroke();
-    // lens specular
-    if(l.on){
-      const sg=ctx.createRadialGradient(tlX-lR*0.3,l.cy-lR*0.35,0,tlX,l.cy,lR);
-      sg.addColorStop(0,'rgba(255,255,255,0.4)'); sg.addColorStop(0.5,'rgba(255,255,255,0.1)'); sg.addColorStop(1,'rgba(255,255,255,0)');
-      ctx.beginPath(); ctx.arc(tlX,l.cy,lR,0,Math.PI*2); ctx.fillStyle=sg; ctx.fill();
-    }
+    ctx.beginPath(); ctx.arc(tlX,l.cy,lR,0,Math.PI*2); ctx.strokeStyle='rgba(0,0,0,0.5)'; ctx.lineWidth=2; ctx.stroke();
+    if(l.on){const sg=ctx.createRadialGradient(tlX-lR*0.3,l.cy-lR*0.35,0,tlX,l.cy,lR);sg.addColorStop(0,'rgba(255,255,255,0.4)');sg.addColorStop(1,'rgba(255,255,255,0)');ctx.beginPath();ctx.arc(tlX,l.cy,lR,0,Math.PI*2);ctx.fillStyle=sg;ctx.fill();}
   });
-
-  // "BRAKE NOW" red tint overlay when light first goes red
-  if(brakeFlash>0){
-    ctx.fillStyle=`rgba(200,0,0,${brakeFlash*0.18})`;
-    ctx.fillRect(0,0,W,wB);
-  }
-
-  // windshield glare
+  if(brakeFlash>0){ctx.fillStyle=`rgba(200,0,0,${brakeFlash*0.18})`;ctx.fillRect(0,0,W,wB);}
+  // glare
   const gl=ctx.createLinearGradient(wL,wT,W*0.6,wB*0.4);
   gl.addColorStop(0,'rgba(200,220,255,0.05)'); gl.addColorStop(1,'rgba(0,0,0,0)');
   ctx.beginPath(); ctx.moveTo(wL,wT); ctx.lineTo(wR,wT); ctx.lineTo(W*0.99,wB); ctx.lineTo(W*0.01,wB); ctx.closePath();
   ctx.fillStyle=gl; ctx.fill();
+  ctx.restore();
 
-  ctx.restore();   // end windshield clip
-
-  // ── A-pillars ──────────────────────────────────────────────────────────
-  ctx.fillStyle='#0c0c10';
+  // ── A-pillars ───────────────────────────────────────────────────────────
+  ctx.fillStyle=th.pillars;
   ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(wL,wT); ctx.lineTo(W*0.01,wB); ctx.lineTo(0,H*0.68); ctx.closePath(); ctx.fill();
   ctx.strokeStyle=th.trim2; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(wL,wT); ctx.lineTo(W*0.01,wB); ctx.stroke();
-  ctx.fillStyle='#0c0c10';
+  ctx.fillStyle=th.pillars;
   ctx.beginPath(); ctx.moveTo(W,0); ctx.lineTo(wR,wT); ctx.lineTo(W*0.99,wB); ctx.lineTo(W,H*0.68); ctx.closePath(); ctx.fill();
   ctx.beginPath(); ctx.moveTo(wR,wT); ctx.lineTo(W*0.99,wB); ctx.stroke();
 
-  // ── dashboard ──────────────────────────────────────────────────────────
+  // ── brand-specific dashboard ─────────────────────────────────────────────
   const dashY=wB;
-  const dg=ctx.createLinearGradient(0,dashY,0,H);
-  dg.addColorStop(0,th.dash); dg.addColorStop(1,'#030308');
-  ctx.fillStyle=dg;
-  ctx.beginPath(); ctx.moveTo(0,dashY); ctx.quadraticCurveTo(W/2,dashY-16,W,dashY); ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath(); ctx.fill();
-  // trim strip
-  ctx.fillStyle=th.trim;  ctx.fillRect(0,dashY-1,W,3);
-  ctx.fillStyle=th.trim2; ctx.fillRect(0,dashY+2,W,2);
+  if(selectedCar==='lamborghini') drawDashLambo(ctx,W,H,dashY,th);
+  else if(selectedCar==='ferrari') drawDashFerrari(ctx,W,H,dashY,th);
+  else drawDashMercedes(ctx,W,H,dashY,th);
 
-  // gauges
-  drawGauge(ctx,W*0.19,dashY+76,50, btSt==='done'?0.1:1, 0, th);
-  drawGauge(ctx,W*0.81,dashY+76,50, btSt==='done'?0.2:0.85, 1, th);
-
-  // ── centre HUD display ────────────────────────────────────────────────
-  const cX=W/2, cY=dashY+46;
-  ctx.fillStyle='rgba(0,0,0,0.6)';
-  ctx.beginPath(); ctx.roundRect(cX-70,cY-18,140,38,7); ctx.fill();
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  if(btSt==='red'){
-    ctx.fillStyle='#ff3030'; ctx.font=`bold 16px 'DM Mono',monospace`; ctx.fillText('BRAKE NOW!',cX,cY);
-  } else if(btSt==='done'){
-    ctx.fillStyle=th.trim; ctx.font=`13px 'DM Mono',monospace`; ctx.fillText('REACTING...',cX,cY);
-  } else if(btSt==='early'){
-    ctx.fillStyle='#ffcc00'; ctx.font=`13px 'DM Mono',monospace`; ctx.fillText('TOO EARLY',cX,cY);
-  } else {
-    ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font=`11px 'DM Mono',monospace`; ctx.fillText(th.name.toUpperCase(),cX,cY);
-  }
-  ctx.textBaseline='alphabetic';
-
-  // ── steering wheel ──────────────────────────────────────────────────────
-  const swX=W/2, swY=dashY+202, swR=86;
-  const rot = 0; // no rotation animation
-  ctx.save(); ctx.translate(swX,swY); ctx.rotate(rot);
-  ctx.shadowColor=th.trim; ctx.shadowBlur=7;
-  ctx.beginPath(); ctx.arc(0,0,swR,0,Math.PI*2);
-  ctx.strokeStyle=th.trim; ctx.lineWidth=10; ctx.stroke();
-  ctx.shadowBlur=0;
-  ctx.strokeStyle=th.dash; ctx.lineWidth=7; ctx.stroke();
-  ctx.beginPath(); ctx.arc(0,0,swR-10,0,Math.PI*2);
-  ctx.strokeStyle=th.trim2; ctx.lineWidth=1; ctx.stroke();
-  // spokes
-  [[0,-swR],[swR*0.866,swR*0.5],[-swR*0.866,swR*0.5]].forEach(([ex,ey])=>{
-    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(ex*0.87,ey*0.87);
-    ctx.strokeStyle=th.dash; ctx.lineWidth=15; ctx.stroke();
-    ctx.strokeStyle=th.trim2; ctx.lineWidth=2; ctx.stroke();
-  });
-  ctx.beginPath(); ctx.arc(0,0,23,0,Math.PI*2);
-  ctx.fillStyle=th.hub; ctx.fill();
-  ctx.strokeStyle=th.cent; ctx.lineWidth=2.5; ctx.stroke();
-  ctx.fillStyle=th.cent; ctx.font=`bold 15px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(selectedCar==='lamborghini'?'λ':selectedCar==='ferrari'?'⸸':'★',0,1);
-  ctx.restore(); ctx.textBaseline='alphabetic';
-
-  // ── speed readout ──────────────────────────────────────────────────────
+  // ── speed readout ────────────────────────────────────────────────────────
   const spd=btSt==='done'?0:122;
   ctx.fillStyle=th.trim; ctx.font=`bold 22px 'Bebas Neue',sans-serif`; ctx.textAlign='left';
   ctx.fillText(spd+' km/h',W*0.038,H-14);
@@ -1220,16 +1288,464 @@ function drawScene(){
   ctx.fillText(`R${currentRound}/${totalRounds}`,W*0.965,H-14);
 }
 
-function drawGauge(ctx,cx,cy,r,fill,type,th){
-  const sa=Math.PI*0.75,ea=Math.PI*2.25;
-  ctx.beginPath(); ctx.arc(cx,cy,r,sa,ea);
-  ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=7; ctx.lineCap='round'; ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx,cy,r,sa,sa+(ea-sa)*Math.min(Math.max(fill,0),1));
-  const g=ctx.createLinearGradient(cx-r,cy,cx+r,cy);
+// ── LAMBORGHINI HURACÁN dashboard ────────────────────────────────────────────
+function drawDashLambo(ctx,W,H,dashY,th){
+  // Dark carbon-fibre textured base
+  const dg=ctx.createLinearGradient(0,dashY,0,H);
+  dg.addColorStop(0,'#1a1510'); dg.addColorStop(0.3,th.dash); dg.addColorStop(1,'#040302');
+  ctx.fillStyle=dg;
+  // Angular Lamborghini dash profile — sharp and low
+  ctx.beginPath();
+  ctx.moveTo(0,dashY+8);
+  ctx.lineTo(W*0.08,dashY+2);
+  ctx.lineTo(W*0.22,dashY-10);
+  ctx.lineTo(W*0.5,dashY-18);
+  ctx.lineTo(W*0.78,dashY-10);
+  ctx.lineTo(W*0.92,dashY+2);
+  ctx.lineTo(W,dashY+8);
+  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+  ctx.fill();
+
+  // Hexagonal carbon pattern on dash surface
+  drawHexPattern(ctx, W, H, dashY, 'rgba(255,255,255,0.03)');
+
+  // Yellow trim lines — angular, not curved
+  ctx.strokeStyle=th.trim; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  ctx.moveTo(0,dashY+8); ctx.lineTo(W*0.08,dashY+2);
+  ctx.lineTo(W*0.22,dashY-10); ctx.lineTo(W*0.5,dashY-18);
+  ctx.lineTo(W*0.78,dashY-10); ctx.lineTo(W*0.92,dashY+2); ctx.lineTo(W,dashY+8);
+  ctx.stroke();
+  ctx.strokeStyle=th.trim2; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(0,dashY+14); ctx.lineTo(W*0.08,dashY+8);
+  ctx.lineTo(W*0.22,dashY-4); ctx.lineTo(W*0.5,dashY-12);
+  ctx.lineTo(W*0.78,dashY-4); ctx.lineTo(W*0.92,dashY+8); ctx.lineTo(W,dashY+14);
+  ctx.stroke();
+
+  // TFT-style digital gauge cluster — angular hexagonal frames
+  drawHexGauge(ctx, W*0.18, dashY+72, 46, btSt==='done'?0.05:1, 'SPEED', th);
+  drawHexGauge(ctx, W*0.82, dashY+72, 46, btSt==='done'?0.1:0.82, 'RPM', th);
+
+  // Centre digital display — Lamborghini fighter-jet HUD style
+  const cX=W/2, cY=dashY+44;
+  // Angled hexagonal frame
+  ctx.fillStyle='rgba(0,0,0,0.7)';
+  ctx.beginPath();
+  ctx.moveTo(cX-80,cY-18); ctx.lineTo(cX-72,cY-26);
+  ctx.lineTo(cX+72,cY-26); ctx.lineTo(cX+80,cY-18);
+  ctx.lineTo(cX+80,cY+18); ctx.lineTo(cX+72,cY+26);
+  ctx.lineTo(cX-72,cY+26); ctx.lineTo(cX-80,cY+18);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle=th.trim; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  if(btSt==='red'){ctx.fillStyle='#ff3030';ctx.font=`bold 15px 'DM Mono',monospace`;ctx.fillText('BRAKE NOW!',cX,cY);}
+  else if(btSt==='done'){ctx.fillStyle=th.trim;ctx.font=`12px 'DM Mono',monospace`;ctx.fillText('REACTING',cX,cY);}
+  else if(btSt==='early'){ctx.fillStyle='#ffcc00';ctx.font=`12px 'DM Mono',monospace`;ctx.fillText('TOO EARLY',cX,cY);}
+  else{ctx.fillStyle='rgba(245,197,24,0.4)';ctx.font=`10px 'DM Mono',monospace`;ctx.fillText(th.name.toUpperCase(),cX,cY);}
+  ctx.textBaseline='alphabetic';
+
+  // Lamborghini steering wheel — D-cut flat bottom, thick rim
+  const swX=W/2, swY=dashY+200, swR=84;
+  ctx.save(); ctx.translate(swX,swY);
+  // Flat bottom D-cut wheel
+  ctx.shadowColor=th.trim; ctx.shadowBlur=6;
+  ctx.beginPath();
+  ctx.arc(0,0,swR,Math.PI*1.15,Math.PI*1.85,false); // top arc
+  ctx.lineTo(swR*0.76,swR*0.66); // bottom right flat
+  ctx.lineTo(-swR*0.76,swR*0.66); // bottom left flat
+  ctx.closePath();
+  ctx.strokeStyle=th.trim; ctx.lineWidth=11; ctx.stroke();
+  ctx.shadowBlur=0;
+  ctx.strokeStyle=th.dash; ctx.lineWidth=8; ctx.stroke();
+  // Yellow grip segments on rim
+  [[Math.PI*1.35,Math.PI*1.5],[Math.PI*1.5,Math.PI*1.65]].forEach(([a1,a2])=>{
+    ctx.beginPath(); ctx.arc(0,0,swR,a1,a2);
+    ctx.strokeStyle=th.trim; ctx.lineWidth=11; ctx.stroke();
+  });
+  // 3 spokes — Lamborghini style (top + two lower angled)
+  [[0,-swR*0.85],[swR*0.7,swR*0.45],[-swR*0.7,swR*0.45]].forEach(([ex,ey])=>{
+    ctx.beginPath(); ctx.moveTo(ex*0.15,ey*0.15); ctx.lineTo(ex,ey);
+    ctx.strokeStyle='#1a1408'; ctx.lineWidth=14; ctx.stroke();
+    ctx.strokeStyle=th.trim2; ctx.lineWidth=2; ctx.stroke();
+    // yellow line on each spoke
+    ctx.beginPath(); ctx.moveTo(ex*0.2,ey*0.2); ctx.lineTo(ex*0.75,ey*0.75);
+    ctx.strokeStyle=th.trim; ctx.lineWidth=2; ctx.stroke();
+  });
+  // Hub — hexagonal
+  drawHexHub(ctx, th);
+  // Lamborghini raging bull logo (simplified SVG-style)
+  drawBullLogo(ctx, th);
+  ctx.restore(); ctx.textBaseline='alphabetic';
+}
+
+// ── FERRARI F8 dashboard ─────────────────────────────────────────────────────
+function drawDashFerrari(ctx,W,H,dashY,th){
+  // Rich black leather with subtle grain
+  const dg=ctx.createLinearGradient(0,dashY,0,H);
+  dg.addColorStop(0,'#1a0505'); dg.addColorStop(0.35,th.dash); dg.addColorStop(1,'#030101');
+  ctx.fillStyle=dg;
+  // Classic smooth Ferrari dash curve — elegant, not aggressive
+  ctx.beginPath();
+  ctx.moveTo(0,dashY+4);
+  ctx.quadraticCurveTo(W*0.25,dashY-8,W*0.5,dashY-14);
+  ctx.quadraticCurveTo(W*0.75,dashY-8,W,dashY+4);
+  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+  ctx.fill();
+
+  // Leather stitch pattern
+  drawStitchPattern(ctx, W, H, dashY, 'rgba(200,0,0,0.2)');
+
+  // Red trim line — single elegant curve
+  ctx.strokeStyle=th.trim; ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.moveTo(0,dashY+4);
+  ctx.quadraticCurveTo(W*0.25,dashY-8,W*0.5,dashY-14);
+  ctx.quadraticCurveTo(W*0.75,dashY-8,W,dashY+4);
+  ctx.stroke();
+  ctx.strokeStyle=th.trim2; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(0,dashY+10);
+  ctx.quadraticCurveTo(W*0.25,dashY-2,W*0.5,dashY-8);
+  ctx.quadraticCurveTo(W*0.75,dashY-2,W,dashY+10);
+  ctx.stroke();
+
+  // Ferrari classic round gauges — large central rev counter
+  drawRoundGauge(ctx, W*0.14, dashY+72, 44, btSt==='done'?0.05:1, 'SPEED', th, false);
+  drawRoundGauge(ctx, W*0.5, dashY+68, 56, btSt==='done'?0.05:0.78, 'RPM', th, true); // central large
+  drawRoundGauge(ctx, W*0.86, dashY+72, 44, btSt==='done'?0.05:0.5, 'TEMP', th, false);
+
+  // Centre HUD — below central rev counter
+  const cX=W/2, cY=dashY+148;
+  ctx.fillStyle='rgba(0,0,0,0.65)';
+  ctx.beginPath(); ctx.roundRect(cX-72,cY-16,144,34,4); ctx.fill();
+  ctx.strokeStyle=th.trim; ctx.lineWidth=1; ctx.stroke();
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  if(btSt==='red'){ctx.fillStyle='#ff3030';ctx.font=`bold 15px 'DM Mono',monospace`;ctx.fillText('BRAKE NOW!',cX,cY);}
+  else if(btSt==='done'){ctx.fillStyle=th.trim;ctx.font=`12px 'DM Mono',monospace`;ctx.fillText('REACTING',cX,cY);}
+  else if(btSt==='early'){ctx.fillStyle='#ffcc00';ctx.font=`12px 'DM Mono',monospace`;ctx.fillText('TOO EARLY',cX,cY);}
+  else{ctx.fillStyle='rgba(200,0,0,0.5)';ctx.font=`10px 'DM Mono',monospace`;ctx.fillText(th.name.toUpperCase(),cX,cY);}
+  ctx.textBaseline='alphabetic';
+
+  // Ferrari steering wheel — round, classic F1 inspired
+  const swX=W/2, swY=dashY+218, swR=82;
+  ctx.save(); ctx.translate(swX,swY);
+  ctx.shadowColor=th.trim; ctx.shadowBlur=5;
+  ctx.beginPath(); ctx.arc(0,0,swR,0,Math.PI*2);
+  ctx.strokeStyle='#1a0505'; ctx.lineWidth=14; ctx.stroke();
+  ctx.shadowBlur=0;
+  // Red sections on rim (Ferrari sport grip)
+  [[Math.PI*0.15,Math.PI*0.45],[Math.PI*0.55,Math.PI*0.85],[Math.PI*1.15,Math.PI*1.45],[Math.PI*1.55,Math.PI*1.85]].forEach(([a1,a2])=>{
+    ctx.beginPath(); ctx.arc(0,0,swR,a1,a2);
+    ctx.strokeStyle=th.trim; ctx.lineWidth=14; ctx.stroke();
+  });
+  // Thin inner ring
+  ctx.beginPath(); ctx.arc(0,0,swR,0,Math.PI*2);
+  ctx.strokeStyle=th.trim2; ctx.lineWidth=1.5; ctx.stroke();
+  // 3 spokes — Ferrari style
+  [[0,-swR*0.85],[swR*0.75,swR*0.48],[-swR*0.75,swR*0.48]].forEach(([ex,ey])=>{
+    ctx.beginPath(); ctx.moveTo(ex*0.18,ey*0.18); ctx.lineTo(ex,ey);
+    ctx.strokeStyle='#0f0303'; ctx.lineWidth=13; ctx.stroke();
+    ctx.strokeStyle=th.trim; ctx.lineWidth=2.5; ctx.stroke();
+  });
+  // Hub
+  ctx.beginPath(); ctx.arc(0,0,22,0,Math.PI*2);
+  ctx.fillStyle='#0f0303'; ctx.fill();
+  ctx.strokeStyle=th.trim; ctx.lineWidth=2; ctx.stroke();
+  // Prancing horse logo
+  drawPrancingHorse(ctx, th);
+  ctx.restore(); ctx.textBaseline='alphabetic';
+}
+
+// ── MERCEDES AMG GT dashboard ────────────────────────────────────────────────
+function drawDashMercedes(ctx,W,H,dashY,th){
+  // Dark anthracite leather, wide and refined
+  const dg=ctx.createLinearGradient(0,dashY,0,H);
+  dg.addColorStop(0,'#141414'); dg.addColorStop(0.4,th.dash); dg.addColorStop(1,'#030303');
+  ctx.fillStyle=dg;
+  // Wide sweeping Mercedes dash — long horizontal, very refined
+  ctx.beginPath();
+  ctx.moveTo(0,dashY+2);
+  ctx.bezierCurveTo(W*0.15,dashY-4, W*0.3,dashY-18, W*0.5,dashY-20);
+  ctx.bezierCurveTo(W*0.7,dashY-18, W*0.85,dashY-4, W,dashY+2);
+  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+  ctx.fill();
+
+  // Quilted leather pattern
+  drawQuilted(ctx, W, H, dashY, 'rgba(255,255,255,0.025)');
+
+  // Chrome/silver trim — twin lines
+  ctx.strokeStyle=th.trim; ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(0,dashY+2);
+  ctx.bezierCurveTo(W*0.15,dashY-4,W*0.3,dashY-18,W*0.5,dashY-20);
+  ctx.bezierCurveTo(W*0.7,dashY-18,W*0.85,dashY-4,W,dashY+2);
+  ctx.stroke();
+  ctx.strokeStyle=th.trim2; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(0,dashY+9);
+  ctx.bezierCurveTo(W*0.15,dashY+3,W*0.3,dashY-11,W*0.5,dashY-13);
+  ctx.bezierCurveTo(W*0.7,dashY-11,W*0.85,dashY+3,W,dashY+9);
+  ctx.stroke();
+
+  // AMG twin-dial cluster with digital centre
+  drawAMGGauge(ctx, W*0.17, dashY+75, 48, btSt==='done'?0.05:1, 'SPEED', th);
+  drawAMGGauge(ctx, W*0.83, dashY+75, 48, btSt==='done'?0.05:0.8, 'RPM', th);
+
+  // Wide centre console display — AMG widescreen style
+  const cX=W/2, cY=dashY+52;
+  ctx.fillStyle='rgba(0,0,0,0.7)';
+  ctx.beginPath(); ctx.roundRect(cX-90,cY-20,180,42,5); ctx.fill();
+  ctx.strokeStyle=th.trim; ctx.lineWidth=1; ctx.stroke();
+  // Inner accent line
+  ctx.strokeStyle=th.trim2; ctx.lineWidth=0.5;
+  ctx.beginPath(); ctx.roundRect(cX-86,cY-16,172,34,3); ctx.stroke();
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  if(btSt==='red'){ctx.fillStyle='#ff3030';ctx.font=`bold 16px 'DM Mono',monospace`;ctx.fillText('BRAKE NOW!',cX,cY);}
+  else if(btSt==='done'){ctx.fillStyle=th.trim;ctx.font=`12px 'DM Mono',monospace`;ctx.fillText('REACTING',cX,cY);}
+  else if(btSt==='early'){ctx.fillStyle='#ffcc00';ctx.font=`12px 'DM Mono',monospace`;ctx.fillText('TOO EARLY',cX,cY);}
+  else{ctx.fillStyle='rgba(200,200,200,0.35)';ctx.font=`10px 'DM Mono',monospace`;ctx.fillText(th.name.toUpperCase(),cX,cY);}
+  ctx.textBaseline='alphabetic';
+
+  // Mercedes steering wheel — round, AMG flat-bottom with turbine spokes
+  const swX=W/2, swY=dashY+208, swR=83;
+  ctx.save(); ctx.translate(swX,swY);
+  // AMG flat bottom
+  ctx.shadowColor='rgba(200,200,200,0.3)'; ctx.shadowBlur=5;
+  ctx.beginPath();
+  ctx.arc(0,0,swR,Math.PI*1.12,Math.PI*1.88,false);
+  ctx.lineTo(swR*0.82,swR*0.72);
+  ctx.lineTo(-swR*0.82,swR*0.72);
+  ctx.closePath();
+  ctx.strokeStyle='#141414'; ctx.lineWidth=13; ctx.stroke();
+  ctx.shadowBlur=0;
+  // Silver grip segments
+  [[Math.PI*1.2,Math.PI*1.5],[Math.PI*1.5,Math.PI*1.8]].forEach(([a1,a2])=>{
+    ctx.beginPath(); ctx.arc(0,0,swR,a1,a2);
+    ctx.strokeStyle=th.trim; ctx.lineWidth=13; ctx.stroke();
+  });
+  ctx.beginPath();
+  ctx.arc(0,0,swR,Math.PI*1.12,Math.PI*1.88,false);
+  ctx.lineTo(swR*0.82,swR*0.72); ctx.lineTo(-swR*0.82,swR*0.72); ctx.closePath();
+  ctx.strokeStyle=th.trim2; ctx.lineWidth=1.5; ctx.stroke();
+  // AMG turbine-style spokes (4 spokes)
+  [[0,-swR*0.82],[swR*0.56,swR*0.56],[-swR*0.56,swR*0.56]].forEach(([ex,ey],i)=>{
+    ctx.beginPath(); ctx.moveTo(ex*0.2,ey*0.2); ctx.lineTo(ex,ey);
+    ctx.strokeStyle='#0a0a0a'; ctx.lineWidth=12; ctx.stroke();
+    ctx.strokeStyle=th.trim2; ctx.lineWidth=2; ctx.stroke();
+  });
+  // Hub
+  ctx.beginPath(); ctx.arc(0,0,21,0,Math.PI*2);
+  ctx.fillStyle='#0a0a0a'; ctx.fill();
+  ctx.strokeStyle=th.trim; ctx.lineWidth=2.5; ctx.stroke();
+  // Three pointed star
+  drawMercedesStar(ctx, th);
+  ctx.restore(); ctx.textBaseline='alphabetic';
+}
+
+// ── Brand logos ──────────────────────────────────────────────────────────────
+function drawBullLogo(ctx, th){
+  // Lamborghini raging bull — simplified geometric
+  ctx.save();
+  ctx.fillStyle=th.trim;
+  // Shield outline
+  ctx.beginPath();
+  ctx.moveTo(0,-14); ctx.lineTo(12,-10); ctx.lineTo(12,2);
+  ctx.quadraticCurveTo(12,12,0,16); ctx.quadraticCurveTo(-12,12,-12,2);
+  ctx.lineTo(-12,-10); ctx.closePath();
+  ctx.fillStyle='rgba(245,197,24,0.15)'; ctx.fill();
+  ctx.strokeStyle=th.trim; ctx.lineWidth=1.5; ctx.stroke();
+  // Bull horns (simplified)
+  ctx.strokeStyle=th.trim; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(-6,-6); ctx.quadraticCurveTo(-10,-2,-7,2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(6,-6); ctx.quadraticCurveTo(10,-2,7,2); ctx.stroke();
+  // Bull body
+  ctx.beginPath(); ctx.ellipse(0,2,4,5,0,0,Math.PI*2);
+  ctx.fillStyle=th.trim; ctx.fill();
+  ctx.restore();
+}
+
+function drawPrancingHorse(ctx, th){
+  // Ferrari prancing horse — simplified
+  ctx.save();
+  ctx.fillStyle=th.trim;
+  // Body
+  ctx.beginPath();
+  ctx.ellipse(2,-2,5,7,Math.PI*0.15,0,Math.PI*2);
+  ctx.fill();
+  // Head
+  ctx.beginPath(); ctx.ellipse(5,-8,3,4,Math.PI*0.3,0,Math.PI*2);
+  ctx.fill();
+  // Legs
+  ctx.strokeStyle=th.trim; ctx.lineWidth=2.5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(-2,4); ctx.lineTo(-4,11); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(2,5); ctx.lineTo(1,12); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(4,4); ctx.lineTo(6,10); ctx.stroke();
+  // Tail
+  ctx.beginPath(); ctx.moveTo(-3,0); ctx.quadraticCurveTo(-10,-4,-8,-10); ctx.stroke();
+  // Mane
+  ctx.beginPath(); ctx.moveTo(3,-6); ctx.quadraticCurveTo(8,-10,6,-14); ctx.stroke();
+  ctx.lineCap='butt';
+  ctx.restore();
+}
+
+function drawMercedesStar(ctx, th){
+  // Three pointed star in circle
+  ctx.save();
+  ctx.strokeStyle=th.trim; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(0,0,10,0,Math.PI*2); ctx.stroke();
+  // 3 points
+  for(let i=0;i<3;i++){
+    const angle=Math.PI/2+i*(Math.PI*2/3);
+    ctx.beginPath(); ctx.moveTo(0,0);
+    ctx.lineTo(Math.cos(angle)*10, Math.sin(angle)*10);
+    ctx.strokeStyle=th.trim; ctx.lineWidth=2.5; ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// ── Dash surface patterns ─────────────────────────────────────────────────────
+function drawHexPattern(ctx, W, H, dashY, col){
+  ctx.strokeStyle=col; ctx.lineWidth=0.5;
+  const s=18;
+  for(let y=dashY;y<H;y+=s*1.5){
+    for(let x=0;x<W;x+=s*1.73){
+      const ox=(y-dashY)%(s*3)<s*1.5?0:s*0.87;
+      drawHex(ctx,x+ox,y,s*0.5);
+    }
+  }
+}
+function drawHex(ctx,cx,cy,r){
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const a=Math.PI/3*i;
+    if(i===0) ctx.moveTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+    else ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+  }
+  ctx.closePath(); ctx.stroke();
+}
+function drawStitchPattern(ctx, W, H, dashY, col){
+  ctx.strokeStyle=col; ctx.lineWidth=0.5; ctx.setLineDash([4,6]);
+  for(let y=dashY+12;y<H;y+=20){
+    ctx.beginPath(); ctx.moveTo(20,y); ctx.lineTo(W-20,y); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+}
+function drawQuilted(ctx, W, H, dashY, col){
+  ctx.strokeStyle=col; ctx.lineWidth=0.5;
+  const s=22;
+  for(let y=dashY;y<H;y+=s){
+    for(let x=0;x<W;x+=s){
+      ctx.strokeRect(x,y,s,s);
+      ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+s,y+s); ctx.stroke();
+    }
+  }
+}
+
+// ── Gauge styles ──────────────────────────────────────────────────────────────
+function drawHexGauge(ctx, cx, cy, r, fill, label, th){
+  // TFT-style hexagonal gauge frame
+  ctx.save(); ctx.translate(cx,cy);
+  // Hex background
+  ctx.beginPath();
+  for(let i=0;i<6;i++){const a=Math.PI/6+Math.PI/3*i;if(i===0)ctx.moveTo((r+8)*Math.cos(a),(r+8)*Math.sin(a));else ctx.lineTo((r+8)*Math.cos(a),(r+8)*Math.sin(a));}
+  ctx.closePath(); ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fill();
+  ctx.strokeStyle=th.trim2; ctx.lineWidth=1; ctx.stroke();
+  // Arc fill
+  const sa=Math.PI*0.8, ea=Math.PI*2.2;
+  ctx.beginPath(); ctx.arc(0,0,r,sa,ea); ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=6; ctx.lineCap='round'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0,0,r,sa,sa+(ea-sa)*Math.min(fill,1));
+  const g=ctx.createLinearGradient(-r,0,r,0);
   g.addColorStop(0,th.trim2); g.addColorStop(1,th.trim);
-  ctx.strokeStyle=g; ctx.lineWidth=7; ctx.stroke(); ctx.lineCap='butt';
-  ctx.fillStyle='rgba(255,255,255,0.18)'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='center';
-  ctx.fillText(type===0?'SPEED':'RPM',cx,cy+r*0.42);
+  ctx.strokeStyle=g; ctx.lineWidth=6; ctx.stroke();
+  ctx.lineCap='butt';
+  // Label
+  ctx.fillStyle=th.trim; ctx.font=`bold 8px 'DM Mono',monospace`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(label,0,0);
+  ctx.restore();
+}
+
+function drawRoundGauge(ctx, cx, cy, r, fill, label, th, large){
+  ctx.save(); ctx.translate(cx,cy);
+  // Bezel
+  ctx.beginPath(); ctx.arc(0,0,r+4,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fill();
+  ctx.strokeStyle=th.trim2; ctx.lineWidth=large?1.5:1; ctx.stroke();
+  // Tick marks
+  for(let i=0;i<=10;i++){
+    const a=Math.PI*0.75+i*(Math.PI*1.5/10);
+    const inner=i%5===0?r*0.75:r*0.83;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(a)*inner,Math.sin(a)*inner);
+    ctx.lineTo(Math.cos(a)*(r-1),Math.sin(a)*(r-1));
+    ctx.strokeStyle=i%5===0?th.trim:th.trim2; ctx.lineWidth=i%5===0?1.5:0.8; ctx.stroke();
+  }
+  // Arc
+  const sa=Math.PI*0.75, ea=Math.PI*2.25;
+  ctx.beginPath(); ctx.arc(0,0,r*0.82,sa,ea); ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=large?8:6; ctx.lineCap='round'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0,0,r*0.82,sa,sa+(ea-sa)*Math.min(fill,1));
+  const g=ctx.createLinearGradient(-r,0,r,0);
+  g.addColorStop(0,th.trim2); g.addColorStop(1,th.trim);
+  ctx.strokeStyle=g; ctx.lineWidth=large?8:6; ctx.stroke();
+  ctx.lineCap='butt';
+  // Needle
+  const na=sa+(ea-sa)*Math.min(fill,1);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Math.cos(na)*r*0.72,Math.sin(na)*r*0.72);
+  ctx.strokeStyle=th.trim; ctx.lineWidth=1.5; ctx.stroke();
+  // Centre dot
+  ctx.beginPath(); ctx.arc(0,0,3,0,Math.PI*2); ctx.fillStyle=th.trim; ctx.fill();
+  // Label
+  ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.font=`${large?9:8}px 'DM Mono',monospace`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(label,0,r*0.3);
+  ctx.restore();
+}
+
+function drawAMGGauge(ctx, cx, cy, r, fill, label, th){
+  ctx.save(); ctx.translate(cx,cy);
+  // Clean AMG bezel — refined ring
+  ctx.beginPath(); ctx.arc(0,0,r+5,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fill();
+  ctx.strokeStyle=th.trim; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0,0,r+2,0,Math.PI*2);
+  ctx.strokeStyle=th.trim2; ctx.lineWidth=0.5; ctx.stroke();
+  // Tick marks
+  for(let i=0;i<=12;i++){
+    const a=Math.PI*0.75+i*(Math.PI*1.5/12);
+    const inner=i%3===0?r*0.72:r*0.82;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(a)*inner,Math.sin(a)*inner);
+    ctx.lineTo(Math.cos(a)*(r-1),Math.sin(a)*(r-1));
+    ctx.strokeStyle=i%3===0?th.trim:'rgba(255,255,255,0.15)'; ctx.lineWidth=i%3===0?1.5:0.7; ctx.stroke();
+  }
+  // Arc
+  const sa=Math.PI*0.75, ea=Math.PI*2.25;
+  ctx.beginPath(); ctx.arc(0,0,r*0.8,sa,ea); ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=7; ctx.lineCap='round'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0,0,r*0.8,sa,sa+(ea-sa)*Math.min(fill,1));
+  const g=ctx.createLinearGradient(-r,0,r,0);
+  g.addColorStop(0,th.trim2); g.addColorStop(1,th.trim);
+  ctx.strokeStyle=g; ctx.lineWidth=7; ctx.stroke();
+  ctx.lineCap='butt';
+  // Needle
+  const na=sa+(ea-sa)*Math.min(fill,1);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Math.cos(na)*r*0.68,Math.sin(na)*r*0.68);
+  ctx.strokeStyle='#fff'; ctx.lineWidth=1.2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0,0,3.5,0,Math.PI*2); ctx.fillStyle=th.trim; ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font=`8px 'DM Mono',monospace`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(label,0,r*0.28);
+  ctx.restore();
+}
+
+function drawHexHub(ctx, th){
+  // Hexagonal hub for Lamborghini
+  ctx.beginPath();
+  for(let i=0;i<6;i++){const a=Math.PI/6+Math.PI/3*i;if(i===0)ctx.moveTo(20*Math.cos(a),20*Math.sin(a));else ctx.lineTo(20*Math.cos(a),20*Math.sin(a));}
+  ctx.closePath();
+  ctx.fillStyle=th.dash; ctx.fill();
+  ctx.strokeStyle=th.trim; ctx.lineWidth=2; ctx.stroke();
+  // Inner hex
+  ctx.beginPath();
+  for(let i=0;i<6;i++){const a=Math.PI/6+Math.PI/3*i;if(i===0)ctx.moveTo(12*Math.cos(a),12*Math.sin(a));else ctx.lineTo(12*Math.cos(a),12*Math.sin(a));}
+  ctx.closePath(); ctx.strokeStyle=th.trim2; ctx.lineWidth=1; ctx.stroke();
 }
 
 document.getElementById('bt-scene').addEventListener('click',()=>btClick());
@@ -1558,14 +2074,276 @@ function svEndGame(){
   });
   svLastShareText=`TIME X — Survival\nAge: ${age} | Sub-mode: ${svSub==='qt'?'QuickTap':'BrakeTest'}\nScore: ${svScore} | Rounds: ${svRound-1}\nBest: ${best}ms | Avg: ${avg}ms`;
   updateProfileStats('sv', svRound-1, avg||null, svScore);
+  saveSession('sv', avg||null, svScore, svRound-1);
+  const pName2=(loadProfile()||{}).name||'Anonymous';
+  saveToLeaderboard('sv', pName2, svScore, false);
+  setScoreCardData('Survival',avg||0,best||0,svScore,svRound-1,'💀 Survived '+( svRound-1)+' rounds');
+  updateStreak();
   showScreen('screen-sv-results');
+  setTimeout(()=>{if(isRec)fireConfetti();},300);
 }
 
 function svShare(){
   const btn=document.getElementById('sv-share-btn');
   navigator.clipboard.writeText(svLastShareText).then(()=>{btn.textContent='✓ Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='⎘ Share';btn.classList.remove('copied');},2000);}).catch(()=>{});
 }
-// ═══════════════════════ SOUND ENGINE ════════════════════════
+// ═══════════════════════ BACKGROUND ANIMATION ════════════════════════
+(function(){
+  const cv=document.getElementById('bg-canvas');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  let W,H,particles=[];
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+  resize(); window.addEventListener('resize',resize);
+  for(let i=0;i<55;i++) particles.push({
+    x:Math.random()*1000,y:Math.random()*1000,
+    vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,
+    r:Math.random()*1.5+0.5,
+    a:Math.random(),col:Math.random()>0.6?'0,255,136':'255,60,110'
+  });
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${p.col},${p.a*0.6})`; ctx.fill();
+    });
+    // draw subtle connection lines
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle=`rgba(0,255,136,${(1-d/120)*0.08})`; ctx.lineWidth=1; ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════ TOAST ════════════════════════
+function showToast(msg, type='', duration=2500){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+(type);
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>t.classList.remove('show'),duration);
+}
+
+// ═══════════════════════ CONFETTI ════════════════════════
+function fireConfetti(){
+  const colors=['#00ff88','#ff3c6e','#ffcb47','#6ee7ff','#a855f7'];
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div');
+    el.className='confetti-p';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-delay:${Math.random()*0.8}s;animation-duration:${1.2+Math.random()*0.8}s;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),2500);
+  }
+}
+
+// ═══════════════════════ RESULTS REVEAL ════════════════════════
+function animateResults(isRecord){
+  const hero=document.querySelector('#screen-results .results-hero');
+  if(hero) hero.classList.add('results-reveal');
+  if(isRecord){
+    setTimeout(()=>{
+      fireConfetti();
+      document.getElementById('res-record').classList.add('flash');
+    },400);
+  }
+}
+
+// ═══════════════════════ HOW TO PLAY (hide after round 1) ════════════════════
+function hideHtp(id){ const el=document.getElementById(id); if(el) el.style.display='none'; }
+
+// ═══════════════════════ STREAK ════════════════════════
+function updateStreak(){
+  try{
+    const today=new Date().toDateString();
+    const data=JSON.parse(localStorage.getItem('tx_streak')||'{}');
+    if(data.last===today){
+      // already played today
+    } else if(data.last===new Date(Date.now()-86400000).toDateString()){
+      data.count=(data.count||1)+1; data.last=today;
+    } else {
+      data.count=1; data.last=today;
+    }
+    localStorage.setItem('tx_streak',JSON.stringify(data));
+    const bar=document.getElementById('streak-bar');
+    if(data.count>=2&&bar){
+      bar.classList.remove('hidden');
+      document.getElementById('streak-text').textContent=`${data.count} day streak`;
+    }
+  }catch(e){}
+}
+
+// ═══════════════════════ SESSION HISTORY ════════════════════════
+function saveSession(mode, avgMs, score, rounds){
+  try{
+    const hist=JSON.parse(localStorage.getItem('tx_history')||'[]');
+    const modeIcons={qt:'⚡',bt:'🏎',sv:'💀'};
+    hist.unshift({mode,icon:modeIcons[mode]||'⚡',avgMs,score,rounds,date:new Date().toLocaleDateString('en-GB'),ts:Date.now()});
+    if(hist.length>20) hist.pop();
+    localStorage.setItem('tx_history',JSON.stringify(hist));
+  }catch(e){}
+}
+
+function renderHistory(){
+  const hist=JSON.parse(localStorage.getItem('tx_history')||'[]');
+  const list=document.getElementById('history-list'); if(!list) return;
+  list.innerHTML='';
+  if(!hist.length){list.innerHTML='<div class="lb-empty">No games played yet. Get out there!</div>';return;}
+  hist.forEach(h=>{
+    const row=document.createElement('div');
+    row.className='history-row';
+    const modeNames={qt:'QuickTap',bt:'BrakeTest',sv:'Survival'};
+    row.innerHTML=`<div class="hr-mode">${h.icon}</div><div class="hr-info"><div class="hr-title">${modeNames[h.mode]||h.mode} · ${h.rounds} rounds</div><div class="hr-sub">${h.date}</div></div><div class="hr-val">${h.mode==='sv'?h.score+' pts':(h.avgMs||'—')+'ms'}</div>`;
+    list.appendChild(row);
+  });
+}
+
+function clearHistory(){
+  if(!confirm('Clear all session history?')) return;
+  localStorage.removeItem('tx_history');
+  renderHistory();
+  showToast('History cleared','');
+}
+
+// ═══════════════════════ LEADERBOARD ════════════════════════
+let currentLbTab='qt';
+
+function saveToLeaderboard(mode, name, val, isTime){
+  try{
+    const key='tx_lb_'+mode;
+    const lb=JSON.parse(localStorage.getItem(key)||'[]');
+    lb.push({name,val,date:new Date().toLocaleDateString('en-GB'),ts:Date.now()});
+    // sort: for time modes lower=better, for sv higher=better
+    if(isTime) lb.sort((a,b)=>a.val-b.val);
+    else lb.sort((a,b)=>b.val-a.val);
+    if(lb.length>10) lb.pop();
+    localStorage.setItem(key,JSON.stringify(lb));
+    return lb.findIndex(e=>e.ts===lb.find(x=>x.ts)?.ts);
+  }catch(e){return-1;}
+}
+
+function switchLbTab(tab, el){
+  currentLbTab=tab;
+  document.querySelectorAll('.lb-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderLeaderboard(tab);
+}
+
+function renderLeaderboard(tab){
+  tab=tab||currentLbTab;
+  const key='tx_lb_'+tab;
+  const lb=JSON.parse(localStorage.getItem(key)||'[]');
+  const list=document.getElementById('lb-list'); if(!list) return;
+  list.innerHTML='';
+  if(!lb.length){list.innerHTML='<div class="lb-empty">No scores yet for this mode. Be the first!</div>';return;}
+  const medals=['gold','silver','bronze'];
+  lb.forEach((e,i)=>{
+    const row=document.createElement('div');
+    row.className='lb-row'+(medals[i]?' '+medals[i]:'');
+    const valStr=tab==='sv'?e.val+' pts':e.val+'ms';
+    row.innerHTML=`<div class="lb-rank">${i+1}</div><div class="lb-name">${e.name||'Anonymous'}</div><div class="lb-val">${valStr}</div><div class="lb-date">${e.date}</div>`;
+    list.appendChild(row);
+  });
+}
+
+// ═══════════════════════ SCORE CARD ════════════════════════
+let _scData=null;
+
+function showScoreCard(){
+  if(!_scData) return;
+  const cv=document.getElementById('sc-canvas');
+  const ctx=cv.getContext('2d');
+  const W=400,H=500;
+  ctx.clearRect(0,0,W,H);
+
+  // Background
+  const bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#0a0a0f'); bg.addColorStop(1,'#12121a');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  // Border glow
+  ctx.strokeStyle='rgba(0,255,136,0.4)'; ctx.lineWidth=2;
+  ctx.strokeRect(1,1,W-2,H-2);
+
+  // Header
+  ctx.fillStyle='#00ff88';
+  ctx.font=`bold 48px 'Arial',sans-serif`;
+  ctx.textAlign='center'; ctx.fillText('TIME X',W/2,70);
+  ctx.fillStyle='rgba(255,255,255,0.3)';
+  ctx.font=`12px 'Arial',sans-serif`;
+  ctx.fillText((_scData.mode||'').toUpperCase()+' MODE',W/2,90);
+
+  // Big time
+  ctx.fillStyle='#00ff88';
+  ctx.font=`bold 72px 'Arial',sans-serif`;
+  ctx.fillText(_scData.avg+'ms',W/2,185);
+  ctx.fillStyle='rgba(255,255,255,0.4)';
+  ctx.font=`13px 'Arial',sans-serif`;
+  ctx.fillText('AVERAGE REACTION TIME',W/2,210);
+
+  // Divider
+  ctx.strokeStyle='rgba(255,255,255,0.1)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(40,230); ctx.lineTo(W-40,230); ctx.stroke();
+
+  // Stats
+  const stats=[
+    ['SCORE',_scData.score+'/100'],
+    ['BEST',_scData.best+'ms'],
+    ['ROUNDS',String(_scData.rounds)],
+    ['AGE GROUP',_scData.ageGroup],
+  ];
+  stats.forEach(([label,val],i)=>{
+    const x=i%2===0?110:290, y=280+Math.floor(i/2)*80;
+    ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font=`10px 'Arial',sans-serif`;
+    ctx.fillText(label,x,y-16);
+    ctx.fillStyle='#e8e8f0'; ctx.font=`bold 26px 'Arial',sans-serif`;
+    ctx.fillText(val,x,y+8);
+  });
+
+  // Rating badge
+  ctx.fillStyle='rgba(0,255,136,0.12)';
+  ctx.beginPath(); ctx.roundRect(W/2-80,400,160,36,8); ctx.fill();
+  ctx.strokeStyle='rgba(0,255,136,0.4)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.fillStyle='#00ff88'; ctx.font=`bold 14px 'Arial',sans-serif`;
+  ctx.fillText(_scData.rating,W/2,423);
+
+  // Footer
+  ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font=`11px 'Arial',sans-serif`;
+  ctx.fillText('freddy767.github.io/TIME-X',W/2,475);
+
+  document.getElementById('sc-overlay').classList.add('active');
+}
+
+function downloadScoreCard(){
+  const cv=document.getElementById('sc-canvas');
+  const a=document.createElement('a');
+  a.download='timex-result.png';
+  a.href=cv.toDataURL('image/png');
+  a.click();
+  showToast('Score card saved! 📸','success');
+}
+
+function setScoreCardData(mode, avg, best, score, rounds, rating){
+  const b=bench(age);
+  _scData={mode,avg,best,score,rounds,rating,ageGroup:`Age ${age} (avg ${b.mean}ms)`};
+}
+
+// ═══════════════════════ HOOK INTO EXISTING SYSTEMS ════════════════════════
+// Wrap showResults to add animations, session save, leaderboard save
+const _origShowResults=showResults;
+showResults=function(modeName){
+  _origShowResults.call(this,modeName);
+};
+
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let _actx = null;
 let soundOn = true;
