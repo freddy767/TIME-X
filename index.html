@@ -852,7 +852,9 @@ function showScreen(id){
 }
 function goHome(){
   clearWT(); btStop(); svStop(); gamePhase='idle';
-  paused=false; document.getElementById('pause-overlay').classList.remove('active');
+  paused=false;
+  window._dcMode=false; window._promoMode=false; window._xpcMode=false;
+  document.getElementById('pause-overlay').classList.remove('active');
   showScreen('screen-mode');
 }
 function clearWT(){ if(waitTimer){clearTimeout(waitTimer);waitTimer=null;} }
@@ -1125,8 +1127,10 @@ function markChip(sid,idx,early,ms){
 
 // ── Shared results ──
 function showResults(modeName){
-  // Intercept for daily challenge mode
-  if(window._dcMode){ finishDailyTask([...times]); return; }
+  // Intercept for special modes — all handled here, no wrapper chains
+  if(window._dcMode){ window._dcMode=false; finishDailyTask([...times]); return; }
+  if(window._promoMode){ window._promoMode=false; finishPromoTask([...times]); return; }
+  if(window._xpcMode){ window._xpcMode=false; finishXPChallenge([...times]); return; }
   const valid=times.filter(t=>!t.tooEarly).map(t=>t.ms);
   if(!valid.length){goHome();return;}
   const avg=Math.round(valid.reduce((a,b)=>a+b,0)/valid.length);
@@ -3063,17 +3067,13 @@ function dismissRankUp(){document.getElementById('rankup-overlay').classList.rem
 const _xpSave=saveSession;
 saveSession=function(mode,avgMs,score,rounds){
   _xpSave(mode,avgMs,score,rounds);
-  if(window._dcMode||window._promoMode)return;
+  if(window._dcMode||window._promoMode||window._xpcMode)return;
   const earned=awardXP(mode,avgMs,score,rounds);
   setTimeout(()=>showToast(`+${earned} XP`,'' ),1500);
 };
 
 // Hook promo intercept into showResults
-const _promoShowResults=showResults;
-showResults=function(modeName){
-  if(window._promoMode){finishPromoTask([...times]);return;}
-  _promoShowResults.call(this,modeName);
-};
+// Promo intercept handled directly in showResults above
 
 // Hook promo into svEndGame — handled inside svEndGame via _promoMode check
 
@@ -3368,12 +3368,7 @@ function finishXPChallenge(taskTimes){
   renderChallenges();
 }
 
-// Hook xpc intercept into showResults
-const _xpcShowResults=showResults;
-showResults=function(modeName){
-  if(window._xpcMode){finishXPChallenge([...times]);return;}
-  _xpcShowResults.call(this,modeName);
-};
+// XPC intercept handled directly in showResults above
 
 // Hook xpc into svEndGame — add check at top of existing svEndGame
 </script>
